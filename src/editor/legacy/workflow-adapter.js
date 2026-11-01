@@ -83,9 +83,11 @@ export function createLegacyWorkflowAdapter({ state, commands, views, root }) {
     if (mode !== 'mesh') {
       state.meshEdit.enabled = false;
       commands.setTool('select');
+      if (mode === 'rig' && context.selection.type === 'slot' && context.hasMesh) {
+        commands.setMeshWorkbenchTab('binding');
+      }
     } else if (context.selection.type === 'slot') {
-      const tab = context.hasMesh ? context.meshTab : 'binding';
-      commands.setMeshWorkbenchTab(tab);
+      commands.setMeshWorkbenchTab('mesh');
     }
     views.setOutlinerTab(mode === 'art' || mode === 'mesh' ? 'draw' : 'rig');
     views.renderAll();
@@ -158,7 +160,7 @@ export function createLegacyWorkflowAdapter({ state, commands, views, root }) {
         }
         break;
       case 'bind-mesh':
-        selectStage('mesh');
+        selectStage('rig');
         commands.setMeshWorkbenchTab('binding');
         break;
       case 'switch-rig':

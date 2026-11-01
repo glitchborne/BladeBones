@@ -26,8 +26,8 @@
       </div>
       <nav class="workflow-nav" aria-label="Workflow">
         <button id="workflowArt" type="button" data-workflow-mode="art" aria-pressed="true">ART</button>
-        <button id="workflowRig" type="button" data-workflow-mode="rig" aria-pressed="false">RIG</button>
         <button id="workflowMesh" type="button" data-workflow-mode="mesh" aria-pressed="false">MESH</button>
+        <button id="workflowRig" type="button" data-workflow-mode="rig" aria-pressed="false">RIG</button>
         <button id="workflowAnimate" type="button" data-workflow-mode="animate" aria-pressed="false">ANIMATE</button>
       </nav>
       <div class="workflow-mode-copy" aria-live="polite">
@@ -157,7 +157,7 @@
         <section class="workbench-pane workbench-assets-pane">
           <div class="workbench-pane-head"><span>Artwork</span><span class="tag">library</span></div>
           <div class="workbench-assets-body">
-            <div class="box"><h3>Artwork staging</h3><p class="note">Import/place images as slots, draw bones over them, then use the Mesh Workbench → Binding tab to set Parent Bone. Use Mesh / Weights only when the image must bend.</p><label><input type="checkbox" id="artAutoPlace" checked> auto-place new art on stage</label><div class="inline"><button id="addRectAtt">Place rect</button><button id="addPngBtn">Place PNG</button><input id="pngInput" type="file" accept="image/*" multiple class="hidden-file-input"></div><hr><div id="attList" class="list"></div></div>
+            <div class="box"><h3>Artwork staging</h3><p class="note">Import/place images as slots. If an image must bend, prepare its topology in MESH before drawing bones. Rigid artwork can skip MESH and go straight to RIG.</p><label><input type="checkbox" id="artAutoPlace" checked> auto-place new art on stage</label><div class="inline"><button id="addRectAtt">Place rect</button><button id="addPngBtn">Place PNG</button><input id="pngInput" type="file" accept="image/*" multiple class="hidden-file-input"></div><hr><div id="attList" class="list"></div></div>
           </div>
         </section>
         <section class="workbench-pane workbench-mesh-pane">

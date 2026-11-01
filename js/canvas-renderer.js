@@ -71,7 +71,7 @@ function meshVertexUV(v,att){
   const x0=-(att.pivotX??.5)*att.w,y0=-(att.pivotY??.5)*att.h;
   return{u:att.w?((Number(v.x||0)-x0)/att.w):0,v:att.h?((Number(v.y||0)-y0)/att.h):0};
 }
-function meshVertexSourcePoint(v,att){const uv=meshVertexUV(v,att);return{x:uv.u*att.w,y:uv.v*att.h};}
+function meshVertexSourcePoint(v,att){return imageUVToSourcePoint(meshVertexUV(v,att),att);}
 function drawImageMeshTriangle(img,att,srcPts,dstPts,tint,tintAlpha){
   const m=triangleTransform(srcPts,dstPts);if(!m)return;
   const dpr=canvasDpr();
@@ -101,7 +101,9 @@ function drawSlot(s){
   const mesh=ensureSlotMesh(s);if(mesh&&mesh.enabled&&drawSlotMesh(s,att,alpha,tint,tintAlpha,blend))return;
   ctx.save();ctx.globalAlpha=alpha;ctx.globalCompositeOperation=blend;applyWorldAffineToCanvas(sw);const x=-(att.pivotX??.5)*att.w,y=-(att.pivotY??.5)*att.h;
   if(att.type==='image'){
-    const img=getImage(att);if(img&&img.complete&&img.naturalWidth){ctx.drawImage(img,x,y,att.w,att.h);if(tintAlpha>0){ctx.save();ctx.globalAlpha=tintAlpha;ctx.globalCompositeOperation='source-atop';ctx.fillStyle=tint;ctx.fillRect(x,y,att.w,att.h);ctx.restore();}}
+    const img=getImage(att);if(img&&img.complete&&img.naturalWidth){
+      const im=imageTextureToLocalTransform(att);ctx.save();ctx.transform(im.a,im.b,im.c,im.d,im.e,im.f);ctx.drawImage(img,0,0,att.w,att.h);if(tintAlpha>0){ctx.save();ctx.globalAlpha=tintAlpha;ctx.globalCompositeOperation='source-atop';ctx.fillStyle=tint;ctx.fillRect(0,0,att.w,att.h);ctx.restore();}ctx.restore();
+    }
     else{ctx.fillStyle=mixColor('#333333',tint,tintAlpha);ctx.fillRect(x,y,att.w,att.h);ctx.strokeStyle='#aaa';ctx.strokeRect(x,y,att.w,att.h);}
   }else{
     ctx.fillStyle=mixColor(att.color||'#888888',tint,tintAlpha);ctx.globalAlpha=alpha*.65;ctx.fillRect(x,y,att.w,att.h);ctx.globalAlpha=alpha;ctx.strokeStyle='#ddd';ctx.strokeRect(x,y,att.w,att.h);

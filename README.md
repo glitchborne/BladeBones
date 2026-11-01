@@ -51,8 +51,8 @@ Runtime export v11:
 Use the top navigation to focus on the current stage:
 
 1. **ART** — import/place artwork and organize objects.
-2. **RIG** — draw bones, arrange hierarchy and attach artwork.
-3. **MESH** — create topology, bind and paint weights when deformation is needed.
+2. **MESH** — create topology first when the artwork needs to bend. Rigid artwork can skip this stage.
+3. **RIG** — draw bones, arrange hierarchy, attach artwork and bind/paint weights for prepared meshes.
 4. **ANIMATE** — create clips, add keys, edit the timeline and preview playback.
 
 Rigid artwork can animate without a mesh or bone weights. View/Pick filters,
@@ -307,10 +307,10 @@ Swap Edge       preserves vertex indices, so offsets are unchanged
 Use Rigging Mode for setup data:
 
 1. Import or place artwork.
-2. Create bones.
-3. Open Mesh Workbench → Binding and set Parent Bone.
-4. Use Mesh Workbench → Mesh to create/edit topology.
-5. Use Mesh Workbench → Weights to bind vertices.
+2. If the artwork must bend, use **MESH** to create/edit topology before drawing bones.
+3. Switch to **RIG** and create bones.
+4. Open Mesh Workbench → Binding and set Parent Bone.
+5. Use Mesh Workbench → Weights to bind vertices for deformable artwork.
 6. Validate project health.
 
 ### Animation Mode
@@ -345,7 +345,7 @@ Rebuilding a grid replaces topology. Use it early, before detailed FFD animation
 
 ### Element selection modes
 
-The lower viewport workbench is a horizontal, resizable panel. Its left half contains View and Pick Filters. Its right half contains Binding, Mesh and Weights. The Mesh tab separates the editor context from the selected mesh element type:
+The lower viewport workbench is a horizontal, resizable panel. Its left half contains View and Pick Filters. Its right half contains Mesh, Binding and Weights. The Mesh tab separates the editor context from the selected mesh element type:
 
 ```text
 1 / Vertex   select and move vertices
@@ -479,7 +479,7 @@ This follows the same readability goal as Spine's Weights view, where vertex pie
 
 ## v10.16 Deformation Preview Notes
 
-v10.16 does not change the runtime mesh deformation schema, but it makes the setup/animation split explicit. The Binding workbench still follows the common rigging path:
+v10.16 did not change the runtime mesh deformation schema, but it made the setup/animation split explicit. Its original Binding workflow used this order before the current ART → MESH → RIG flow moved topology preparation earlier:
 
 1. **Parent slot** — choose selected/nearest parent bone or keep the slot rigid.
 2. **Create mesh topology** — build a 3×3 or 4×4 mesh and jump to Mesh editing.

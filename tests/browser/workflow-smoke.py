@@ -117,6 +117,17 @@ def run(root, artifacts):
             page.wait_for_function('state.slots[0].local.x === 24')
             check(True, 'Undo/redo shortcuts preserve artwork edits')
 
+            mode('mesh')
+            if not page.evaluate('state.slots[0].mesh?.enabled === true'):
+                page.locator('#workflowPrimaryAction').click()
+            page.wait_for_function('state.slots[0].mesh?.enabled === true')
+            check(True, 'MESH creates an enabled mesh before rigging')
+            page.locator('#wbMeshGrid33').click()
+            check(page.evaluate('state.slots[0].mesh.vertices.length === 16'), 'mesh topology grid editing remains reachable')
+            page.keyboard.press('2')
+            check(page.evaluate('state.meshEdit.selectionMode === "edge"'), 'mesh edge-selection shortcut preserved')
+            page.keyboard.press('1')
+
             mode('rig')
             page.locator('#toolBone').click()
             box = page.locator('#canvas').bounding_box()
@@ -160,17 +171,7 @@ def run(root, artifacts):
                 page.locator('#workflowParentBone').select_option(bone_id)
                 check(page.evaluate('(id) => state.slots[0].bone === id', bone_id), 'RIG attaches artwork through existing binding command')
 
-            mode('mesh')
-            if not page.evaluate('state.slots[0].mesh?.enabled === true'):
-                page.locator('#workflowPrimaryAction').click()
-            page.wait_for_function('state.slots[0].mesh?.enabled === true')
-            check(True, 'MESH creates an enabled mesh through existing control')
-            page.locator('#wbMeshGrid33').click()
-            check(page.evaluate('state.slots[0].mesh.vertices.length === 16'), 'mesh topology grid editing remains reachable')
-            page.keyboard.press('2')
-            check(page.evaluate('state.meshEdit.selectionMode === "edge"'), 'mesh edge-selection shortcut preserved')
-            page.keyboard.press('1')
-            page.locator('#meshWorkbenchTabBinding').click()
+            check(page.locator('#meshWorkbenchTabBinding').is_visible(), 'RIG exposes binding for prepared mesh artwork')
             page.locator('#wbFlowAutoObject').click()
             check(page.evaluate('state.slots[0].mesh.vertices.some(v => v.weights.some(w => w.w > 0))'), 'existing auto binding remains reachable')
             page.locator('#meshWorkbenchTabWeights').click()
@@ -277,7 +278,7 @@ def run(root, artifacts):
 
             for width, height in ((1920, 1080), (1600, 900), (1366, 768)):
                 page.set_viewport_size({'width': width, 'height': height})
-                for name in ('art', 'rig', 'mesh', 'animate'):
+                for name in ('art', 'mesh', 'rig', 'animate'):
                     mode(name)
                     if name in ('art', 'mesh'):
                         page.locator('#drawOrderList').get_by_text(slot_name, exact=True).first.click()

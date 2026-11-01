@@ -1,7 +1,7 @@
 import { renderWorkflowDom, updateWorkflowUtilityControls } from './workflow-dom.js';
 import { buildWorkflowView } from './workflow-view.js';
 
-const WORKFLOW_MODES = new Set(['art', 'rig', 'mesh', 'animate']);
+const WORKFLOW_MODES = new Set(['art', 'mesh', 'rig', 'animate']);
 const OBSERVED_ROOT_IDS = [
   'sceneOutliner',
   'objectRigTree',

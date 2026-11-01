@@ -19,4 +19,14 @@ function rgbToHex({r,g,b}){const c=v=>clamp(Math.round(v),0,255).toString(16).pa
 function lerpColor(a,b,t){const ca=hexToRgb(a),cb=hexToRgb(b);return rgbToHex({r:lerp(ca.r,cb.r,t),g:lerp(ca.g,cb.g,t),b:lerp(ca.b,cb.b,t)});}
 function mixColor(base,tint,amount){return lerpColor(normalizeHex(base,'#888888'),normalizeHex(tint,'#ffffff'),clamp(Number(amount||0),0,1));}
 function copySlotPose(s){return{visible:!!s.visible,alpha:clamp(Number(s.alpha??1),0,1),attachment:s.attachment||null,tint:normalizeHex(s.tint||s.color||'#ffffff'),tintAlpha:clamp(Number(s.tintAlpha??0),0,1),blendMode:s.blendMode||'normal'};}
+// Image pixels use a top-left / Y-down axis, while BladeBones local space is Y-up.
+function imageTextureToLocalTransform(att){
+  const w=Math.max(0,Number(att?.w||0)),h=Math.max(0,Number(att?.h||0));
+  const pivotX=Number(att?.pivotX??.5),pivotY=Number(att?.pivotY??.5);
+  return{a:1,b:0,c:0,d:-1,e:-pivotX*w,f:(1-pivotY)*h};
+}
+function imageUVToSourcePoint(uv,att){
+  const w=Math.max(0,Number(att?.w||0)),h=Math.max(0,Number(att?.h||0));
+  return{x:Number(uv?.u||0)*w,y:(1-Number(uv?.v||0))*h};
+}
 function htm(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}

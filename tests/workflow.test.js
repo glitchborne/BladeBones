@@ -1,4 +1,6 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const test = require('node:test');
 
 let buildWorkflowView;
@@ -122,7 +124,7 @@ function createRoot() {
     ['#clipList', createElement()],
     ['#documentPanel', createElement()],
   ]);
-  const modeButtons = ['art', 'rig', 'mesh', 'animate'].map((workflowMode) => {
+  const modeButtons = ['art', 'mesh', 'rig', 'animate'].map((workflowMode) => {
     const button = createElement();
     button.dataset.workflowMode = workflowMode;
     return button;
@@ -271,6 +273,13 @@ test('builds a presentation for all four workflows', () => {
   }
 });
 
+test('primary navigation presents ART, MESH, RIG, ANIMATE in authoring order', () => {
+  const html = fs.readFileSync(path.resolve(__dirname, '../index.html'), 'utf8');
+  const modes = [...html.matchAll(/data-workflow-mode="(art|mesh|rig|animate)"/g)]
+    .map((match) => match[1]);
+  assert.deepEqual(modes.slice(0, 4), ['art', 'mesh', 'rig', 'animate']);
+});
+
 test('guides an empty startup to New Project and a new document to Import Image', () => {
   const startup = buildWorkflowView(createContext({
     documentType: 'none',
@@ -309,15 +318,21 @@ test('guides an empty startup to New Project and a new document to Import Image'
   assert.equal(emptyDocument.guidance.primary.label, 'Import Image');
 });
 
-test('guides rigging and animation without claiming completion from counts', () => {
-  const artworkNeedsRig = buildWorkflowView(createContext({ boneCount: 0 }), 'art');
+test('guides artwork through optional mesh, then rigging and animation', () => {
+  const artworkNeedsMesh = buildWorkflowView(createContext({
+    boneCount: 0,
+    hasMesh: false,
+  }), 'art');
+  const artworkPrepared = buildWorkflowView(createContext({ boneCount: 0 }), 'art');
   const rig = buildWorkflowView(createContext({ boneCount: 0 }), 'rig');
   const animation = buildWorkflowView(createContext({
     keyCount: 0,
     selection: { type: 'bone', id: 'bone-1', name: 'Hip' },
   }), 'animate');
 
-  assert.equal(artworkNeedsRig.guidance.primary.name, 'create-bone');
+  assert.equal(artworkNeedsMesh.guidance.primary.name, 'switch-mesh');
+  assert.equal(artworkNeedsMesh.guidance.secondary.name, 'switch-rig');
+  assert.equal(artworkPrepared.guidance.primary.name, 'switch-rig');
   assert.equal(rig.guidance.primary.name, 'create-bone');
   assert.match(rig.guidance.text, /Create a bone/);
   assert.equal(animation.guidance.primary.name, 'add-key');
@@ -361,6 +376,17 @@ test('mesh guidance requires an artwork selection and offers Create Mesh when ne
   assert.equal(noSelection.actions['create-mesh'].visible, false);
   assert.equal(noSelection.actions['bind-mesh'].visible, false);
   assert.equal(noArtwork.guidance.primary.name, 'create-mesh');
+});
+
+test('prepared mesh continues to Rig and binding guidance belongs to Rig', () => {
+  const mesh = buildWorkflowView(createContext({ hasBinding: false }), 'mesh');
+  const rig = buildWorkflowView(createContext({ hasBinding: false }), 'rig');
+
+  assert.equal(mesh.guidance.primary.name, 'switch-rig');
+  assert.equal(mesh.actions['bind-mesh'].visible, false);
+  assert.equal(rig.guidance.primary.name, 'bind-mesh');
+  assert.equal(rig.actions['bind-mesh'].visible, true);
+  assert.match(rig.guidance.text, /topology is ready/i);
 });
 
 test('does not offer mesh deformation actions for an unsupported selection', () => {

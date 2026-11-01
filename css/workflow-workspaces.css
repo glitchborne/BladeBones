@@ -210,8 +210,26 @@
 
 .workflow-shell[data-workflow="rig"] .stage.viewport { grid-template-rows: minmax(0, 1fr) !important; }
 
-.workflow-shell[data-workflow="rig"] .viewport-workbench,
-.workflow-shell[data-workflow="rig"] .viewport-workbench-resizer,
+.workflow-shell[data-workflow="rig"][data-has-document="true"][data-has-mesh="true"] .stage.viewport {
+  grid-template-rows: minmax(0, 1fr) 8px var(--workflow-mesh-height) !important;
+}
+
+.workflow-shell[data-workflow="rig"][data-has-document="true"][data-has-mesh="true"] .viewport-workbench {
+  display: grid !important;
+}
+
+.workflow-shell[data-workflow="rig"][data-has-document="true"][data-has-mesh="true"] .viewport-workbench-resizer {
+  display: block !important;
+}
+
+.workflow-shell[data-workflow="rig"][data-has-document="true"][data-has-mesh="true"] .workbench-assets-pane {
+  display: none !important;
+}
+
+.workflow-shell[data-workflow="rig"][data-has-document="true"][data-has-mesh="true"] .workbench-mesh-pane {
+  display: flex !important;
+}
+
 .workflow-shell[data-workflow="rig"] .timeline,
 .workflow-shell[data-workflow="rig"] .timeline-settings,
 .workflow-shell[data-workflow="rig"] .resize-timeline-tools { display: none !important; }

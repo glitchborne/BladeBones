@@ -126,3 +126,40 @@ test('bone tool starts from the artwork object root without creating or modifyin
   assert.deepEqual(state.selected, { type: 'bone', id: 'b1' });
   assert.deepEqual(state.bones, before);
 });
+
+test('Mesh opens topology first and Rig opens binding for a prepared mesh', async () => {
+  const { createLegacyWorkflowAdapter } = await adapterModule;
+  const state = fixture();
+  state.slots[0].mesh = {
+    enabled: true,
+    vertices: [
+      { x: 0, y: 0, weights: [] },
+      { x: 1, y: 0, weights: [] },
+      { x: 0, y: 1, weights: [] },
+    ],
+    triangles: [0, 1, 2],
+  };
+  const openedTabs = [];
+  const commands = {
+    setMode: () => {},
+    setTool: (tool) => { state.tool = tool; },
+    setMeshWorkbenchTab: (tab) => { openedTabs.push(tab); state.meshEdit.workbenchTab = tab; },
+    stopPlayback: () => {},
+    restoreBindPose: () => {},
+  };
+  const views = {
+    setOutlinerTab: () => {},
+    renderAll: () => {},
+  };
+  const adapter = createLegacyWorkflowAdapter({
+    state,
+    root: { dataset: { workflow: 'art' } },
+    commands,
+    views,
+  });
+
+  assert.equal(adapter.activateMode('mesh').ok, true);
+  assert.equal(openedTabs.at(-1), 'mesh');
+  assert.equal(adapter.activateMode('rig').ok, true);
+  assert.equal(openedTabs.at(-1), 'binding');
+});

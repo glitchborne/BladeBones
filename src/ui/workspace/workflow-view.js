@@ -1,15 +1,15 @@
 const WORKFLOW_COPY = Object.freeze({
   art: Object.freeze({
     label: 'Artwork',
-    description: 'Import and arrange artwork, then choose what to work on next.',
-  }),
-  rig: Object.freeze({
-    label: 'Rig',
-    description: 'Create and arrange bones. Binding and weights are optional for rigid motion.',
+    description: 'Import and arrange artwork, then choose rigid or deformable setup.',
   }),
   mesh: Object.freeze({
     label: 'Mesh',
-    description: 'Create topology for selected artwork and prepare it for deformation.',
+    description: 'Create deformation topology before building the skeleton.',
+  }),
+  rig: Object.freeze({
+    label: 'Rig',
+    description: 'Create bones, attach artwork and bind prepared meshes to the skeleton.',
   }),
   animate: Object.freeze({
     label: 'Animation',
@@ -74,7 +74,7 @@ function createActionStates(context, mode) {
             : ''
     ),
     'bind-mesh': createActionState(
-      documentExists && mode === 'mesh' && slotSelected && meshExists && deformable && !bound,
+      documentExists && mode === 'rig' && slotSelected && meshExists && deformable && !bound,
       documentExists && slotSelected && meshExists && deformable && !bound,
       !documentExists
         ? 'Create or open a project first.'
@@ -152,12 +152,23 @@ function createGuidance(context, mode, actions) {
       };
     }
 
-    if (count(context, 'boneCount') === 0) {
+    if (selectedSlot(context) && !context.hasMesh) {
       return {
         visible: true,
-        title: 'Add a rig',
-        text: 'Create bones to control this artwork.',
-        primary: primary('Rig / Create Bone', 'create-bone'),
+        title: 'Choose how this artwork moves',
+        text:
+          'If it needs to bend, prepare a mesh before rigging. Rigid pieces can skip Mesh.',
+        primary: primary('Mesh / Prepare', 'switch-mesh'),
+        secondary: primary('Rig / Skip Mesh', 'switch-rig'),
+      };
+    }
+
+    if (selectedSlot(context) && context.hasMesh) {
+      return {
+        visible: true,
+        title: 'Mesh is prepared',
+        text: 'Continue to Rig to draw bones and bind the artwork.',
+        primary: primary('Continue to Rig', 'switch-rig'),
         secondary: null,
       };
     }
@@ -172,6 +183,16 @@ function createGuidance(context, mode, actions) {
         title: 'Start the rig',
         text: 'Create a bone, then place it over the artwork you want to control.',
         primary: primary('Create Bone', 'create-bone'),
+        secondary: null,
+      };
+    }
+
+    if (selectedSlot(context) && context.hasMesh && context.canDeform && !context.hasBinding) {
+      return {
+        visible: true,
+        title: 'Bind the mesh',
+        text: 'The topology is ready. Attach it to the rig and assign bone weights.',
+        primary: primary('Open Binding', 'bind-mesh'),
         secondary: null,
       };
     }
@@ -210,13 +231,12 @@ function createGuidance(context, mode, actions) {
       };
     }
 
-    if (context.canDeform && !context.hasBinding) {
+    if (context.hasMesh) {
       return {
         visible: true,
-        title: 'Prepare deformation if needed',
-        text:
-          'Open Binding to add bone deformation. Rigid animation works without binding or weights.',
-        primary: primary('Open Binding', 'bind-mesh'),
+        title: 'Topology ready',
+        text: 'Continue to Rig to create bones, attach the artwork and bind weights.',
+        primary: primary('Continue to Rig', 'switch-rig'),
         secondary: null,
       };
     }

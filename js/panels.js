@@ -171,7 +171,7 @@ function slotBindingWorkflowHtml(s,{bindBone=null,weightBone=null,parent=null,pa
   const influences=slotInfluenceBoneIds(s);const unweighted=meshUnweightedVertexIndices(s);const candidates=typeof allMeshCandidateBoneIds==='function'?allMeshCandidateBoneIds(s.id):[];
   const selectedName=bindBone?htm(bindBone.name):'none';const weightName=weightBone?htm(weightBone.name):'none';
   const parentStep=hasParent?'done':'warn';
-  const meshStep=meshActive&&hasTopology?'done':(hasParent?'todo':'off');
+  const meshStep=meshActive&&hasTopology?'done':'off';
   const weightStep=!meshActive?'off':(influences.length&&unweighted.length===0?'done':(influences.length?'warn':'todo'));
   const testStep=st.severity==='ok'?'done':(meshActive?'warn':(hasParent?'done':'todo'));
   const parentActions=`<button id="wbFlowParentSelected" ${bindBone?'':'disabled'}>Use selected</button><button id="wbFlowParentNearest">Nearest</button>`;
@@ -179,10 +179,10 @@ function slotBindingWorkflowHtml(s,{bindBone=null,weightBone=null,parent=null,pa
   const weightActions=`<button id="wbFlowAutoObject" ${candidates.length?'':'disabled'}>Auto object bones</button><button id="wbFlowAutoParent" ${hasParent?'':'disabled'}>Parent chain</button><button id="wbFlowGoWeights">Open Weights</button>`;
   const testActions=`<button id="wbFlowSelectParent" ${hasParent?'':'disabled'}>Select parent</button><button id="wbFlowSelectWeight" ${weightBone?'':'disabled'}>Select active bone</button><button id="wbFlowExitMesh">Exit mesh edit</button>`;
   return `<div class="binding-flow">
-    <div class="binding-flow-head"><div><div class="mesh-subpanel-title inline-title">Guided binding workflow</div><p class="note">Use this when turning artwork into a controllable rigged slot: parent it, create topology, bind weights, then test by moving bones.</p></div><div class="binding-flow-actions"><button id="wbFlowQuickRigid" ${hasParent||bindBone?'':'disabled'}>Quick rigid</button><button id="wbFlowQuickSetup">Quick mesh setup</button></div></div>
+    <div class="binding-flow-head"><div><div class="mesh-subpanel-title inline-title">Guided rig binding</div><p class="note">For deformable artwork, topology is prepared first in MESH. In RIG, attach the slot, bind weights, then test deformation. Rigid artwork can skip mesh and weights.</p></div><div class="binding-flow-actions"><button id="wbFlowQuickRigid" ${hasParent||bindBone?'':'disabled'}>Quick rigid</button><button id="wbFlowQuickSetup">Quick mesh setup</button></div></div>
     <div class="binding-step-grid">
-      ${bindingWorkflowStepHtml({n:1,title:'Parent slot',state:parentStep,detail:`Current parent: <b>${htm(parentName)}</b>. Selected/last bone: <b>${selectedName}</b>.`,actions:parentActions})}
-      ${bindingWorkflowStepHtml({n:2,title:'Create mesh topology',state:meshStep,detail:`Mesh render is <b>${meshActive?'ON':'OFF'}</b>. Topology: ${grid.cols}×${grid.rows}, ${m?.vertices?.length||0} verts, ${(m?.triangles||[]).length} triangles.`,actions:meshActions})}
+      ${bindingWorkflowStepHtml({n:1,title:'Mesh topology',state:meshStep,detail:`Prepared in MESH. Mesh render is <b>${meshActive?'ON':'OFF'}</b>. Topology: ${grid.cols}×${grid.rows}, ${m?.vertices?.length||0} verts, ${(m?.triangles||[]).length} triangles.`,actions:meshActions})}
+      ${bindingWorkflowStepHtml({n:2,title:'Parent slot',state:parentStep,detail:`Current parent: <b>${htm(parentName)}</b>. Selected/last bone: <b>${selectedName}</b>.`,actions:parentActions})}
       ${bindingWorkflowStepHtml({n:3,title:'Bind / auto-weight',state:weightStep,detail:`Active weight bone: <b>${weightName}</b>. Influences: ${influences.length||0}. ${unweighted.length?'<b>'+unweighted.length+' unweighted verts</b>.':'All vertices have weights.'}`,actions:weightActions})}
       ${bindingWorkflowStepHtml({n:4,title:'Test deformation',state:testStep,detail:`Status: <b>${htm(st.label)}</b>. Move a parent/influence bone in Rigging to check deformation before animating.`,actions:testActions})}
     </div>
@@ -425,7 +425,7 @@ function renderMeshWorkbench(){
   const selectedBoneOk=weightBone&&boneAffectsWeights(weightBone);
   const boneOpts=['<option value="">choose bone…</option>'].concat(bonesForSlotObject(s).map(b=>'<option value="'+b.id+'" '+(weightBone&&b.id===weightBone.id?'selected':'')+'>'+htm(b.name+' · '+boneRoleLabel(b)+(boneAffectsWeights(b)?'':' · no weights'))+'</option>')).join('');
   const parentOpts=['<option value="">No parent / object root space</option>'].concat(bonesForSlotObject(s).map(b=>'<option value="'+b.id+'" '+(b.id===parent?'selected':'')+'>'+htm(b.name)+'</option>')).join('');
-  const tabs=`<div class="mesh-workbench-head"><div class="mesh-workbench-title">Mesh Workbench <span class="tag">${htm(s.name)} · ${m.vertices.length} verts / ${(m.triangles||[]).length} triangles / ${(m.edges||[]).length} edges</span></div><div class="mesh-workbench-tabs"><button id="meshWorkbenchTabBinding" class="${tab==='binding'?'on':''}">Binding</button><button id="meshWorkbenchTabMesh" class="${tab==='mesh'?'on':''}">Mesh</button><button id="meshWorkbenchTabWeights" class="${tab==='weights'?'on':''}">Weights</button></div></div>`;
+  const tabs=`<div class="mesh-workbench-head"><div class="mesh-workbench-title">Mesh Workbench <span class="tag">${htm(s.name)} · ${m.vertices.length} verts / ${(m.triangles||[]).length} triangles / ${(m.edges||[]).length} edges</span></div><div class="mesh-workbench-tabs"><button id="meshWorkbenchTabMesh" class="${tab==='mesh'?'on':''}">Mesh</button><button id="meshWorkbenchTabBinding" class="${tab==='binding'?'on':''}">Binding</button><button id="meshWorkbenchTabWeights" class="${tab==='weights'?'on':''}">Weights</button></div></div>`;
   let body='';
   if(tab==='binding'){
     const btab=currentBindingWorkbenchTab();

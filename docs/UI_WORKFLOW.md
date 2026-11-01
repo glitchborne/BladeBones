@@ -5,13 +5,16 @@ The workflow navigation exposes four presentation stages over the existing edito
 | Stage | Main task | Contextual workspace |
 | --- | --- | --- |
 | ART | Import/place artwork and organize objects | Artwork library; selected artwork transforms |
-| RIG | Draw bones, establish hierarchy and attach artwork | Rig hierarchy; transform/rig properties, parent bone and setup pose |
-| MESH | Prepare deformation when needed | Binding, topology or weights workbench for selected artwork |
+| MESH | Prepare deformation topology when needed | Topology workbench for selected artwork |
+| RIG | Draw bones, establish hierarchy and bind artwork | Rig hierarchy; parent bone, weights, setup pose and deformation checks |
 | ANIMATE | Create clips, key transforms and preview motion | Clip tools, transport, timeline and contextual animation properties |
 
-Mesh binding is optional for rigid slot animation. FFD remains in the existing
-animation inspector for a selected enabled mesh. Stage changes are navigation,
-not a new animation system or a change to the Project/Runtime format.
+The normal deformable path is **ART → MESH → RIG → ANIMATE**. Mesh is optional:
+rigid artwork can go directly from ART to RIG. MESH owns topology preparation;
+RIG owns skeleton creation plus parent/binding/weight setup for a prepared mesh.
+FFD remains in the existing animation inspector for a selected enabled mesh.
+Stage changes are navigation, not a new animation system or a change to the
+Project/Runtime format.
 
 ## Disclosure and reachability
 

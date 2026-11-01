@@ -1,8 +1,21 @@
 # Changelog
 
+## Image orientation fix
+
+- Corrected imported image rendering between Canvas Y-down pixels and BladeBones Y-up world coordinates.
+- Applied the same orientation mapping to mesh UV rendering and PNG export.
+- Added regression coverage for image-space transforms and UV source mapping.
+
+## Workflow order polish
+
+- Reordered the primary authoring path to **ART → MESH → RIG → ANIMATE**.
+- MESH now opens topology editing directly; RIG opens Binding for a selected prepared mesh.
+- Rigid artwork can explicitly skip MESH and continue directly to RIG.
+- Updated next-step guidance and binding copy so topology preparation no longer appears after bone setup.
+
 ## Unreleased — Workflow-centered workspace
 
-- Added ART / RIG / MESH / ANIMATE navigation with contextual tools and next-step hints.
+- Added workflow navigation with contextual tools and next-step hints.
 - Made the viewport central and limited the timeline to animation work.
 - Moved filters, markers, diagnostics and JSON utilities behind secondary disclosure.
 - Added contextual inspector/hierarchy presentation and a Rig attachment/setup entry point using existing commands.

@@ -58,7 +58,7 @@ function renderExportMeshVertexUV(v,att){
   const x0=-(att.pivotX??.5)*att.w,y0=-(att.pivotY??.5)*att.h;
   return{u:att.w?((Number(v?.x||0)-x0)/att.w):0,v:att.h?((Number(v?.y||0)-y0)/att.h):0};
 }
-function renderExportMeshVertexSourcePoint(v,att){const uv=renderExportMeshVertexUV(v,att);return{x:uv.u*att.w,y:uv.v*att.h};}
+function renderExportMeshVertexSourcePoint(v,att){return imageUVToSourcePoint(renderExportMeshVertexUV(v,att),att);}
 function renderExportTrianglePath(rctx,points){rctx.beginPath();rctx.moveTo(points[0].x,points[0].y);rctx.lineTo(points[1].x,points[1].y);rctx.lineTo(points[2].x,points[2].y);rctx.closePath();}
 function renderExportDrawImageMeshTriangle(rctx,img,att,srcPts,dstPts,tint,tintAlpha){
   const m=renderExportTriangleTransform(srcPts,dstPts);if(!m)return;
@@ -92,7 +92,7 @@ function renderExportDrawSlot(rctx,w2s,s){
   const x=-(att.pivotX??.5)*att.w,y=-(att.pivotY??.5)*att.h;
   if(att.type==='image'){
     const img=getImage(att);
-    if(img&&img.complete&&img.naturalWidth){rctx.drawImage(img,x,y,att.w,att.h);if(tintAlpha>0){rctx.save();rctx.globalAlpha=tintAlpha;rctx.globalCompositeOperation='source-atop';rctx.fillStyle=tint;rctx.fillRect(x,y,att.w,att.h);rctx.restore();}}
+    if(img&&img.complete&&img.naturalWidth){const im=imageTextureToLocalTransform(att);rctx.save();rctx.transform(im.a,im.b,im.c,im.d,im.e,im.f);rctx.drawImage(img,0,0,att.w,att.h);if(tintAlpha>0){rctx.save();rctx.globalAlpha=tintAlpha;rctx.globalCompositeOperation='source-atop';rctx.fillStyle=tint;rctx.fillRect(0,0,att.w,att.h);rctx.restore();}rctx.restore();}
     else{rctx.fillStyle=mixColor('#333333',tint,tintAlpha);rctx.fillRect(x,y,att.w,att.h);}
   }else{
     rctx.fillStyle=mixColor(att.color||'#888888',tint,tintAlpha);rctx.globalAlpha=alpha*.65;rctx.fillRect(x,y,att.w,att.h);

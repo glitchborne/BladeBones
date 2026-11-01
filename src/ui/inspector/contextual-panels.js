@@ -109,16 +109,24 @@ export function createContextualPanels({ root, runAction }) {
     if (mode === 'art' && !context.artworkCount) {
       return [['import-art', 'Import image']];
     }
-    if ((mode === 'art' || mode === 'rig') && !context.boneCount) {
+    if (mode === 'art' && context.selection?.type === 'slot' && !context.hasMesh) {
+      return [['switch-mesh', 'Prepare mesh'], ['switch-rig', 'Skip to rig']];
+    }
+    if (mode === 'art' && context.selection?.type === 'slot' && context.hasMesh) {
+      return [['switch-rig', 'Continue to rig']];
+    }
+    if (mode === 'rig' && !context.boneCount) {
       return [['create-bone', 'Create bone']];
+    }
+    if (mode === 'rig' && context.selection?.type === 'slot' && context.hasMesh &&
+        !context.hasBinding) {
+      return [['bind-mesh', 'Open binding']];
     }
     if (mode === 'mesh' && context.selection?.type === 'slot') {
       if (!context.hasMesh) {
         return [['create-mesh', 'Create mesh']];
       }
-      if (!context.hasBinding) {
-        return [['bind-mesh', 'Open Binding']];
-      }
+      return [['switch-rig', 'Continue to rig']];
     }
     if (mode === 'animate' && context.selection?.id && !context.keyCount) {
       return [['add-key', 'Add key']];
@@ -290,7 +298,7 @@ export function createContextualPanels({ root, runAction }) {
       return;
     }
 
-    const currentMode = ['art', 'rig', 'mesh', 'animate'].includes(mode) ? mode : 'art';
+    const currentMode = ['art', 'mesh', 'rig', 'animate'].includes(mode) ? mode : 'art';
     const selection = context || {};
 
     isRefreshing = true;
