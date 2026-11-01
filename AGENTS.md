@@ -3,10 +3,11 @@
 ## Project and contracts
 
 - BladeBones is a static browser application using Canvas 2D and shared JavaScript globals. `index.html` defines script loading order. There is no bundler or package installation step.
-- Keep changes focused. Preserve the current architecture unless the user explicitly requests a larger migration.
-- Read the owning implementation and relevant contract before changing behavior. Project serialization is documented in `docs/PROJECT_FORMAT_PROJECT_V11.md`; runtime export and validation in `docs/PROJECT_FORMAT_V11.md`; general ownership in `docs/ARCHITECTURE_NOTES.md`.
+- Before implementing a non-trivial change, read `docs/CODE_STYLE.md` and `docs/ARCHITECTURE.md`. They are mandatory canonical style and architecture rules for subsequent changes.
+- Keep changes focused. Follow the target boundaries through bounded changes; do not perform a broad legacy migration without an explicit task.
+- Read the owning implementation and relevant contract before changing behavior. Project serialization is documented in `docs/PROJECT_FORMAT_PROJECT_V11.md`; runtime export and validation in `docs/PROJECT_FORMAT_V11.md`. `docs/ARCHITECTURE_NOTES.md` is historical rewrite context; `docs/ARCHITECTURE.md` owns current architectural direction.
 - Synchronize serialization changes with their canonical contract and focused regression tests. Preserve authored document data; keep temporary editor state out of runtime exports.
-- Use existing model mutation helpers and the established `changed()` / rendering flow. Account for shared globals and script loading order when adding functions or files.
+- When changing legacy paths, use existing model mutation helpers and the established `changed()` / rendering flow at the editor boundary. New isolated code follows the explicit APIs in `docs/ARCHITECTURE.md`; do not add globals as the normal extension mechanism. Account for shared globals and script loading order at integration seams.
 - Keep durable technical documentation in English.
 
 ## Verification and preview

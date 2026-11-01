@@ -112,7 +112,14 @@ indie_2d/
 
 ## Architecture overview
 
-The prototype uses shared global state rather than modules/classes. This is acceptable for the JS prototype, but a native rewrite should split the model, editor commands, viewport, animation sampler, and exporters into explicit systems.
+Read [Architecture](docs/ARCHITECTURE.md) and [Code style](docs/CODE_STYLE.md)
+before implementing a non-trivial change. They define mandatory dependency,
+ownership, naming and mutation rules. The overview below describes the legacy
+implementation; new code follows the target boundaries through bounded changes.
+
+The prototype currently uses shared global state rather than module boundaries.
+The target separates authored data, editor commands, viewport, animation sampling,
+IO and runtime playback; existing files migrate incrementally with their tests.
 
 Core flow:
 
@@ -130,7 +137,9 @@ animation-curves.js        evaluates keys and FFD tracks over time
 persistence.js             serializes the current project JSON
 ```
 
-The safest rule for new features is: **mutate data through `model.js` helpers, then call `changed()` and `renderAll()` from UI/commands**.
+For existing legacy paths, mutate through `model.js` helpers and call `changed()`
+and `renderAll()` at the editor boundary. New isolated code follows the explicit
+APIs and dependency rules in the canonical architecture document.
 
 ## Document types
 

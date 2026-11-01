@@ -1,5 +1,10 @@
 # Architecture Notes for Haxe + Kha Rewrite
 
+Status: historical rewrite notes, retained as context. Mandatory current direction
+is defined in [ARCHITECTURE.md](ARCHITECTURE.md) and coding rules in
+[CODE_STYLE.md](CODE_STYLE.md). These notes do not authorize a Haxe/Kha rewrite or
+override the canonical Project/Runtime contracts.
+
 ## Core separation recommended
 
 The JS prototype intentionally keeps many systems global. In the Haxe/Kha app, split them early:
