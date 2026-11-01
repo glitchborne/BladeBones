@@ -39,9 +39,10 @@ Runtime export v11:
 - `buildRuntimeDocument()` now emits `format: "indie-2d-runtime"`, `schema: "indie-2d-runtime-v11"`, `version: 11`, `schemaVersion: "11.0.0"`;
 - runtime data separates `slots[]` from `meshes[]`; slots reference meshes by id;
 - runtime data includes explicit `setupPose.bones` and `setupPose.slots`;
-- mesh vertices, UVs, triangles, edges, hull, per-vertex weights, bind coordinates, and optional deform setup are exported in a stable schema;
+- mesh vertices, UVs, triangles, edges, hull, per-vertex weights, bind coordinates, and animation FFD data are exported in a stable schema;
 - `validateRuntimeDocument()` validates schema version, references, parallel weights, topology indices, bind coordinates, setup pose entries, and deform-track offsets;
 - Data / Export contains **Project JSON** for full editor saves and **Runtime JSON v11** for clean game/runtime payloads;
+- the canonical editor save contract and its migration defaults are documented in `docs/PROJECT_FORMAT_PROJECT_V11.md`;
 - Runtime JSON excludes editor-only state such as layout, selection, hover, brush sessions, diagnostics UI state, test-pose state, undo/redo, view filters, pick filters, and workbench tabs;
 - a **Download Runtime v11** button exports the runtime payload as a standalone JSON file.
 
@@ -60,7 +61,19 @@ Open:
 http://localhost:8000
 ```
 
+Run the serialization contract suite with:
+
+```bash
+node --test tests/serialization.test.js
+```
+
 Folder save/load uses the browser File System Access API, so Chromium-based browsers are the best supported target.
+
+## Working with VibeCorp
+
+Open the repository root as the VibeCorp project. The tracked `.vibecorp/verification.json` runs `node --test` in worker checkouts and provides an optional Python 3 preview on a free loopback port. Node.js is required for checks; Python is only needed for preview. No npm installation is required.
+
+Shared agent instructions live in `AGENTS.md`, with Claude and Gemini/Antigravity entry points and a repo-local worker orchestration skill. Coding workers require a clean committed Git root. See [VibeCorp project workflow](docs/VIBECORP_WORKFLOW.md) for setup, task scopes, review and delivery.
 
 ## Project layout
 
