@@ -1,4 +1,4 @@
-# Project Format V11 — Stable Runtime Export Schema
+# Runtime Export Format V11
 
 This document describes the **runtime export** schema emitted by `buildRuntimeDocument()` in `js/persistence.js`.
 
@@ -69,6 +69,17 @@ Objects group rig hierarchies and optionally allow nested rigs through `parentSl
   "parentSlot": null,
   "visible": true,
   "renderLayerId": "chars"
+}
+```
+
+For ToonDoc, runtime also contains a `toon` object with the canvas, cameras, active camera id, and render layers. Camera transforms in this object are setup transforms; keyed camera motion belongs in animation `cameraTracks`.
+
+```json
+{
+  "canvas": { "width": 1920, "height": 1080, "background": "#000000", "transparent": true },
+  "cameras": [{ "id": "cam1", "name": "Main Camera", "x": 0, "y": 0, "r": 0, "z": 1 }],
+  "activeCameraId": "cam1",
+  "renderLayers": [{ "id": "chars", "name": "Characters", "order": 10, "visible": true }]
 }
 ```
 
@@ -244,23 +255,41 @@ Animation clips use seconds for time and degrees for rotation.
 }
 ```
 
-Deform tracks are keyed by slot id. For a slot with an enabled mesh, each deform key should have an `offsets[]` length that matches that mesh vertex count. ToonDoc camera animation, when present, is exported in `cameraTracks`.
+Deform tracks are keyed by slot id. For a slot with an enabled mesh, every deform key must have an `offsets[]` length that matches that mesh vertex count. ToonDoc camera animation, when present, is exported in `cameraTracks` and camera keys reference camera ids in `toon.cameras`.
+
+Runtime track keys contain playback channels and interpolation data only. Bone keys preserve Hermite tangents, slot keys preserve display/transform channels, camera keys preserve camera transforms, and deform keys preserve offsets and curves. Editor selection or drag metadata on a key is not exported.
+
+The editor has no persistent mesh deform setup separate from animation keys. Runtime export therefore omits optional `mesh.deformSetup`; the current evaluated FFD pose is transient editor state and is not used as runtime setup data.
+
+For ToonDoc, runtime `toon.cameras[]` contains each camera's stable setup transform. The editor stores this setup separately from the currently evaluated camera pose so runtime output does not depend on the timeline playhead. Project JSON initializes this setup from the camera transform when loading older ToonDoc saves.
 
 ## Validation
 
-`validateRuntimeDocument()` checks:
+`validateRuntimeDocument()` treats documented structure and references as errors. The intentional warning cases are an empty object list and enabled meshes with no vertices, triangles, or weighted influences for individual vertices.
+
+| Invariant | Valid | Warning | Error |
+| --- | --- | --- | --- |
+| Objects | Every object root and optional parent slot resolves; ToonDoc render layers resolve | No objects | Missing roots/slots/layers or cyclic object nesting |
+| Rig and setup | Bone parents resolve, hierarchy is acyclic, and every bone/slot has finite setup data | — | Broken references, cycles, missing or malformed setup |
+| Mesh topology | Parallel vertex/weight arrays and in-range triangle, edge, and hull indices | Enabled mesh has no vertices or triangles | Malformed arrays or invalid indices |
+| Weights | Each weight is finite and within `[0, 1]`; per-vertex sum is at most `1.0` within rounding tolerance; bind coordinates and bones resolve | Enabled mesh vertex has no influences | Invalid value/sum, missing bone, or missing bind coordinate |
+| Animation | Track maps, keys, curves, event times, camera ids, and deform offsets match the clip and mesh | — | Malformed keys, broken references, or offset-count mismatch |
+| ToonDoc | Canvas, active camera, cameras, and render layers are complete | — | Missing or malformed camera/layer data |
+| Runtime separation | No editor-only state is present | — | Editor-only field appears in the runtime payload |
+
+It checks:
 
 - top-level format/schema/version;
-- missing bones, slots, attachments, and meshes;
-- missing setup pose entries;
+- unique ids and valid object, bone, slot, attachment, mesh, marker, render-layer, and camera references;
+- acyclic bone hierarchy and valid object roots/parent slots;
+- missing setup pose entries and malformed setup transforms;
 - mesh vertex/weights parallel arrays;
-- invalid triangle indices;
-- missing or invalid bind coordinates;
-- missing bone references in weights;
-- overweight vertices;
-- deform key offset count mismatches.
+- mesh topology arrays and invalid triangle/edge/hull indices;
+- missing or invalid bind coordinates and weight values/sums;
+- deform setup and deform key offset counts;
+- clip track map/key structure, references, times, interpolation curves, events, active clip, and ToonDoc camera/layer data.
 
-Warnings do not block JSON export, but errors mean the payload is not valid v11 runtime data.
+Warnings do not block JSON export. Weight sums above `1.0` (with a `0.000001` tolerance for six-decimal rounding), broken references, malformed tracks, invalid topology, and missing required setup data are errors and mean the payload is not valid v11 runtime data. Per-vertex sums from `0.0` through `1.0` are accepted; the remaining weight is implicit rest/local-space influence.
 
 ## Migration from v10.x editor data
 
@@ -278,4 +307,3 @@ Important migration rules:
 - `bone.rest` becomes `bone.rest` and `setupPose.bones[id]`;
 - vertex weights are normalized into `{ bone, w, bind }` records;
 - partial weight sums are preserved and marked by `weightSumPolicy`.
-

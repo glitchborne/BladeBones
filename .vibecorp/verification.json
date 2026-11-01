@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "maximumAutomaticRevisions": 1,
+  "maximumDiagnosticChars": 16000,
+  "stopOnFirstFailure": true,
+  "commands": [
+    {
+      "id": "tests",
+      "executable": "node.exe",
+      "args": ["--test"],
+      "timeoutMs": 180000
+    }
+  ],
+  "preview": {
+    "id": "editor-preview",
+    "executable": "python.exe",
+    "args": ["-u", "-m", "http.server", "0", "--bind", "127.0.0.1"],
+    "timeoutMs": 3600000
+  }
+}

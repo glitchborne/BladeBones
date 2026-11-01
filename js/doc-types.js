@@ -4,7 +4,7 @@
 
 function defaultToonSettings(){return {
   canvas:{width:1920,height:1080,background:'#000000',transparent:true},
-  cameras:[{id:'cam1',name:'Main Camera',x:0,y:0,r:0,z:1}],activeCameraId:'cam1',
+  cameras:[{id:'cam1',name:'Main Camera',x:0,y:0,r:0,z:1,setup:{x:0,y:0,r:0,z:1}}],activeCameraId:'cam1',
   renderLayers:[
     {id:'bg',name:'Background',order:0,visible:true,locked:false},
     {id:'chars',name:'Characters',order:10,visible:true,locked:false},
@@ -13,7 +13,13 @@ function defaultToonSettings(){return {
   ]
 };}
 function normalizeDocumentType(v){return v==='toon'?'toon':(v==='game'?'game':'none');}
-function ensureToon(){state.toon=state.toon||defaultToonSettings();state.toon.canvas={...defaultToonSettings().canvas,...(state.toon.canvas||{})};state.toon.cameras=Array.isArray(state.toon.cameras)&&state.toon.cameras.length?state.toon.cameras:defaultToonSettings().cameras;state.toon.renderLayers=Array.isArray(state.toon.renderLayers)&&state.toon.renderLayers.length?state.toon.renderLayers:defaultToonSettings().renderLayers;if(!state.toon.activeCameraId||!state.toon.cameras.some(c=>c.id===state.toon.activeCameraId))state.toon.activeCameraId=state.toon.cameras[0].id;return state.toon;}
+function ensureCameraSetup(camera){
+  if(!camera)return null;
+  const src=camera.setup||camera;
+  camera.setup={x:Number(src.x??0),y:Number(src.y??0),r:Number(src.r??0),z:Math.max(.01,Number(src.z??1))};
+  return camera.setup;
+}
+function ensureToon(){state.toon=state.toon||defaultToonSettings();state.toon.canvas={...defaultToonSettings().canvas,...(state.toon.canvas||{})};state.toon.cameras=Array.isArray(state.toon.cameras)&&state.toon.cameras.length?state.toon.cameras:defaultToonSettings().cameras;state.toon.cameras.forEach(ensureCameraSetup);state.toon.renderLayers=Array.isArray(state.toon.renderLayers)&&state.toon.renderLayers.length?state.toon.renderLayers:defaultToonSettings().renderLayers;if(!state.toon.activeCameraId||!state.toon.cameras.some(c=>c.id===state.toon.activeCameraId))state.toon.activeCameraId=state.toon.cameras[0].id;return state.toon;}
 function activeToonCamera(){const t=ensureToon();return t.cameras.find(c=>c.id===t.activeCameraId)||t.cameras[0];}
 function renderLayerById(id){const t=ensureToon();return t.renderLayers.find(l=>l.id===id)||t.renderLayers[0]||null;}
 function defaultRenderLayerId(){const t=ensureToon();return t.renderLayers.find(l=>l.id==='chars')?.id||t.renderLayers[0]?.id||null;}
@@ -56,7 +62,7 @@ function wireNewProjectButtons(){
 function currentCameraTrackId(){return ensureToon().activeCameraId||'cam1';}
 function writeCameraKey(id=currentCameraTrackId(),t=state.currentTime){const cam=activeToonCamera();if(!cam)return false;state.anim.cameraTracks=state.anim.cameraTracks||{};const qt=roundTime(t);const k={t:qt,x:Number(cam.x||0),y:Number(cam.y||0),r:normAngle(Number(cam.r||0)),z:Math.max(.01,Number(cam.z||1)),curve:makeDefaultCurve()};const arr=state.anim.cameraTracks[id]||(state.anim.cameraTracks[id]=[]);const i=arr.findIndex(x=>Math.abs(x.t-k.t)<.0005);if(i>=0){k.curve=arr[i].curve||makeDefaultCurve();arr[i]=k;}else arr.push(k);arr.sort((a,b)=>a.t-b.t);return true;}
 function sampleCameraTrack(keys,t){if(!keys||!keys.length)return null;keys.forEach(normalizeKeyCurve);if(keys.length===1||t<=keys[0].t)return{...keys[0]};if(t>=keys[keys.length-1].t)return{...keys[keys.length-1]};let lo=0,hi=keys.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(keys[m].t<=t)lo=m;else hi=m;}const a=keys[lo],b=keys[hi];const u=(t-a.t)/Math.max(.00001,b.t-a.t),e=easeFromCurve(a,b,u);return{t,x:lerp(Number(a.x||0),Number(b.x||0),e),y:lerp(Number(a.y||0),Number(b.y||0),e),r:lerpAngle(Number(a.r||0),Number(b.r||0),e),z:lerp(Number(a.z||1),Number(b.z||1),e)};}
-function applyCameraAnimationPose(time){if(state.documentType!=='toon')return;const cam=activeToonCamera();if(!cam)return;const tr=state.anim.cameraTracks?.[cam.id];const sm=sampleCameraTrack(tr,time);if(sm){cam.x=sm.x;cam.y=sm.y;cam.r=sm.r;cam.z=Math.max(.01,sm.z||1);}}
+function applyCameraAnimationPose(time){if(state.documentType!=='toon')return;const cam=activeToonCamera();if(!cam)return;const setup=ensureCameraSetup(cam);cam.x=setup.x;cam.y=setup.y;cam.r=setup.r;cam.z=setup.z;const tr=state.anim.cameraTracks?.[cam.id];const sm=sampleCameraTrack(tr,time);if(sm){cam.x=sm.x;cam.y=sm.y;cam.r=sm.r;cam.z=Math.max(.01,sm.z||1);}}
 function keyCamera(){if(state.documentType!=='toon')return false;pushUndo();writeCameraKey();const kt=roundTime(state.currentTime);state.selectedKeys=[keyRef('camera',currentCameraTrackId(),kt)];state.keySelection={kind:'camera',id:currentCameraTrackId(),time:kt};changed();renderTimeline();renderDocumentPanel?.();return true;}
 
 // Extend existing animation/key functions with camera track support.
@@ -70,8 +76,8 @@ const _baseKeySelected=keySelected;keySelected=function(){if(state.selected.type
 const _baseKeyAll=keyAll;keyAll=function(){_baseKeyAll();if(state.documentType==='toon'){writeCameraKey();state.selectedKeys.push(keyRef('camera',currentCameraTrackId(),roundTime(state.currentTime)));changed();renderTimeline();}};
 
 // Extend persistence without rewriting all existing import internals.
-const _baseExportData=exportData;exportData=function(){const data=_baseExportData();data.version=PROJECT_SAVE_VERSION;data.documentType=state.documentType||'game';data.projectName=state.projectName||'Untitled';data.toon=JSON.parse(JSON.stringify(ensureToon()));data.objects=(data.objects||[]).map(o=>{const src=rigObject(o.id);return{...o,renderLayerId:src?.renderLayerId||defaultRenderLayerId()};});data.animation={...(data.animation||{}),cameraTracks:state.anim.cameraTracks||{}};data.animations=(data.animations||[]).map(c=>{const src=(state.animations||[]).find(x=>x.id===c.id)||{};return{...c,cameraTracks:src.cameraTracks||{}};});data.editor={...(data.editor||{}),documentType:state.documentType,projectName:state.projectName};return data;};
-const _baseImportData=importData;importData=function(raw,fromUndo=false){const data=typeof raw==='string'?JSON.parse(raw):raw;_baseImportData(data,fromUndo);state.documentType=normalizeDocumentType(data.documentType||data.editor?.documentType||'game');state.projectName=String(data.projectName||data.editor?.projectName||'Untitled');state.toon={...defaultToonSettings(),...(data.toon||{})};ensureToon();for(const oData of data.objects||[]){const o=rigObject(oData.id);if(o)o.renderLayerId=oData.renderLayerId||defaultRenderLayerId();}const clips=Array.isArray(data.animations)&&data.animations.length?data.animations:[data.animation||{}];for(const cData of clips){const c=state.animations.find(x=>x.id===(cData.id||state.activeAnimationId));if(c)c.cameraTracks=cData.cameraTracks||{};}state.anim=state.animations.find(c=>c.id===state.activeAnimationId)||state.animations[0];state.anim.cameraTracks=state.anim.cameraTracks||{};refreshDocumentChrome();renderAll();exportJson(true);};
+const _baseExportData=exportData;exportData=function(){const data=_baseExportData();data.version=PROJECT_SAVE_VERSION;data.documentType=state.documentType||'game';data.projectName=state.projectName||'Untitled';if(state.documentType==='toon')data.toon=JSON.parse(JSON.stringify(ensureToon()));else delete data.toon;data.objects=(data.objects||[]).map(o=>{const src=rigObject(o.id);return{...o,renderLayerId:src?.renderLayerId||defaultRenderLayerId()};});data.animation={...(data.animation||{}),cameraTracks:state.anim.cameraTracks||{}};data.animations=(data.animations||[]).map(c=>{const src=(state.animations||[]).find(x=>x.id===c.id)||{};return{...c,cameraTracks:src.cameraTracks||{}};});data.editor={...(data.editor||{}),documentType:state.documentType,projectName:state.projectName,currentTime:state.currentTime};return data;};
+const _baseImportData=importData;importData=function(raw,fromUndo=false){const data=typeof raw==='string'?JSON.parse(raw):raw;_baseImportData(data,fromUndo);state.documentType=normalizeDocumentType(data.documentType||data.editor?.documentType||'game');state.projectName=String(data.projectName||data.editor?.projectName||'Untitled');state.toon={...defaultToonSettings(),...(data.toon||{})};ensureToon();for(const oData of data.objects||[]){const o=rigObject(oData.id);if(o)o.renderLayerId=oData.renderLayerId||defaultRenderLayerId();}const clips=Array.isArray(data.animations)&&data.animations.length?data.animations:[data.animation||{}];for(const cData of clips){const c=state.animations.find(x=>x.id===(cData.id||state.activeAnimationId));if(c)c.cameraTracks=cData.cameraTracks||{};}state.anim=state.animations.find(c=>c.id===state.activeAnimationId)||state.animations[0];state.anim.cameraTracks=state.anim.cameraTracks||{};evaluate(Math.max(0,Number(data.editor?.currentTime)||0),false,false);refreshDocumentChrome();renderAll();exportJson(true);};
 
 function dataUrlToBlob(dataUrl){const [head,body]=String(dataUrl||'').split(',');const mime=(head.match(/data:([^;]+)/)||[])[1]||'application/octet-stream';const bin=atob(body||'');const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime});}
 function blobToDataUrl(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(blob);});}
@@ -80,7 +86,7 @@ async function saveProjectFolder(){
   if(!window.showDirectoryPicker){alert('Folder save needs a Chromium-style browser with File System Access API.');return;}
   if(state.documentType==='none'){showNewProjectModal();return;}
   const dir=await window.showDirectoryPicker({mode:'readwrite'});const assets=await dir.getDirectoryHandle('assets',{create:true});
-  const data=exportData();
+  const data=JSON.parse(JSON.stringify(exportData()));
   for(const a of data.attachments||[]){if(a.type==='image'&&a.src&&String(a.src).startsWith('data:')){const ext=(String(a.src).match(/^data:image\/(\w+)/)||[])[1]||'png';const fileName=safeFileName(a.name||a.id,ext)+'.'+ext;const handle=await assets.getFileHandle(fileName,{create:true});const w=await handle.createWritable();await w.write(dataUrlToBlob(a.src));await w.close();a.src='assets/'+fileName;}}
   const pj=await dir.getFileHandle('project.json',{create:true});const w=await pj.createWritable();await w.write(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));await w.close();
   alert('Saved project.json and assets/ folder.');

@@ -232,6 +232,7 @@ function applyCameraGizmoDrag(d,e){
     const cp=canvasPoint(e);const distScreen=Math.max(1,Math.hypot(cp.x-d.centerScreen.x,cp.y-d.centerScreen.y));
     const factor=distScreen/Math.max(1,d.startDistScreen);cam.z=clamp(d.startZ/Math.max(.02,factor),.01,100);
   }
+  cam.setup={x:Number(cam.x||0),y:Number(cam.y||0),r:Number(cam.r||0),z:Math.max(.01,Number(cam.z||1))};
   if(typeof renderInspector==='function')renderInspector();
 }
 
