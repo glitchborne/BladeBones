@@ -73,7 +73,7 @@ Folder save/load uses the browser File System Access API, so Chromium-based brow
 
 Open the repository root as the VibeCorp project. The tracked `.vibecorp/verification.json` runs `node --test` in worker checkouts and provides an optional Python 3 preview on a free loopback port. Node.js is required for checks; Python is only needed for preview. No npm installation is required.
 
-Shared agent instructions live in `AGENTS.md`, with Claude and Gemini/Antigravity entry points and a repo-local worker orchestration skill. Coding workers require a clean committed Git root. See [VibeCorp project workflow](docs/VIBECORP_WORKFLOW.md) for setup, task scopes, review and delivery.
+Shared agent instructions live in `AGENTS.md`, with a Claude Code entry point and a repo-local worker orchestration skill. Other supported agents read `AGENTS.md` directly. Coding workers require a clean committed Git root. See [VibeCorp project workflow](docs/VIBECORP_WORKFLOW.md) for setup, task scopes, review and delivery.
 
 ## Project layout
 
@@ -98,16 +98,18 @@ indie_2d/
 │  ├─ render-export.js         ToonDoc PNG render export
 │  ├─ layout.js                resizable panel layout
 │  └─ main.js                  startup wiring
-├─ ROADMAP.md                   implementation roadmap and release status
-├─ docs/
-│  ├─ PROJECT_FORMAT_V11.md     stable runtime export schema
-│  ├─ PROJECT_FORMAT_V10.md     editor/project format notes
-│  ├─ MESH_WEIGHTS_RESEARCH.md
-│  ├─ MESH_WEIGHTS_ROADMAP.md
-│  ├─ ARCHITECTURE_NOTES.md
-│  ├─ PROJECT_FORMAT_V8.md     old historical format notes
-│  └─ HAXE_KHA_PORTING_PLAN.md
-└─ CHANGELOG.md
+└─ docs/
+   ├─ ARCHITECTURE.md          canonical architecture rules
+   ├─ CODE_STYLE.md            canonical coding rules
+   ├─ PROJECT_FORMAT_PROJECT_V11.md  editable project contract
+   ├─ PROJECT_FORMAT_V11.md     stable runtime export schema
+   ├─ PROJECT_FORMAT_V10.md     editor/project format notes
+   ├─ MESH_WEIGHTS_RESEARCH.md
+   ├─ MESH_WEIGHTS_ROADMAP.md
+   ├─ ARCHITECTURE_NOTES.md     historical rewrite context
+   ├─ PROJECT_FORMAT_V8.md     old historical format notes
+   ├─ ROADMAP.md               implementation roadmap and release status
+   └─ CHANGELOG.md
 ```
 
 ## Architecture overview

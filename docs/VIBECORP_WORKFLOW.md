@@ -7,7 +7,7 @@ Open this repository root as the selected VibeCorp project. Configure the provid
 The tracked project files are:
 
 - `AGENTS.md`: shared project instructions and verification rules.
-- `CLAUDE.md` / `GEMINI.md`: provider entry points to the shared instructions.
+- `CLAUDE.md`: Claude Code entry point to the shared instructions; other supported agents read `AGENTS.md` directly.
 - `.agents/skills/worker-orchestration/SKILL.md`: canonical delegation workflow.
 - `.claude/skills/worker-orchestration/SKILL.md`: Claude skill entry point.
 - `.vibecorp/verification.json`: captured test commands and optional preview.
