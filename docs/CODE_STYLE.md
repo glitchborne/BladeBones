@@ -8,7 +8,8 @@ touched responsibility without reformatting unrelated code.
 ## Language and tooling
 
 BladeBones currently uses plain browser JavaScript, classic scripts loaded by
-`index.html`, and Node's built-in test runner. There is no installed formatter,
+`index.html`, explicitly injected workflow ES modules, and Node's built-in test
+runner. There is no installed formatter,
 linter, bundler, TypeScript compiler or npm dependency installation step.
 
 Use JavaScript and browser-native ES modules for new isolated subsystems, with the

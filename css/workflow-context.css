@@ -1,0 +1,164 @@
+/* Contextual disclosure over the retained desktop shell. */
+.app.workflow-shell [hidden] {
+  display: none !important;
+}
+
+.workflow-shell .toolbar-row {
+  width: 100%;
+}
+
+.workflow-shell .preview-toolbar:not(:has(button:not([hidden]))) {
+  display: none;
+}
+
+.workflow-shell .workflow-animation-tools {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  border-left: 1px solid var(--line);
+}
+
+.workflow-shell .workflow-animation-tools label {
+  margin: 0;
+  font-size: 11px;
+}
+
+.workflow-shell .workflow-hierarchy-details {
+  margin: 5px 0;
+}
+
+.workflow-shell .workflow-hierarchy-details > summary {
+  padding: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.workflow-shell .workbench-mesh-pane .mesh-workbench-grid {
+  grid-auto-rows: max-content;
+  align-items: start;
+  align-content: start;
+}
+
+.workflow-shell .workbench-mesh-pane .mesh-cell {
+  min-height: max-content;
+  overflow: visible;
+}
+
+.workflow-shell .timeline-settings > .box:first-of-type {
+  position: sticky;
+  top: 28px;
+  z-index: 2;
+  background: var(--panel);
+  box-shadow: 0 4px 5px var(--bg);
+}
+
+.workflow-shell :is(button, summary, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.workflow-shell #pickStatus {
+  display: none;
+}
+
+.workflow-shell[data-has-artwork="true"] #workflowGuidance {
+  top: auto;
+  right: auto;
+  bottom: 16px;
+  left: 16px;
+  width: min(320px, calc(100% - 32px));
+  padding: 12px;
+  transform: none;
+  pointer-events: none;
+}
+
+.workflow-shell[data-has-artwork="true"] #workflowGuidance button {
+  pointer-events: auto;
+}
+
+.workflow-shell[data-active-tool="bone"] #workflowGuidance {
+  display: none;
+}
+
+.workflow-shell[data-has-artwork="true"] #workflowGuidanceTitle {
+  font-size: 14px;
+}
+
+.workflow-shell .contextual-selection-heading {
+  align-items: center;
+}
+
+.workflow-shell .contextual-selection-name {
+  overflow-wrap: anywhere;
+}
+
+.workflow-shell .contextual-selection-actions {
+  flex: 0 0 auto;
+  max-width: 120px;
+}
+
+.app.workflow-shell .tree-row {
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  min-height: 25px;
+}
+
+.app.workflow-shell .tree-meta {
+  max-width: 78px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0;
+}
+
+.workflow-shell .tree-meta :is(.tree-badge, .contextual-tree-kind) {
+  font-size: 8px;
+}
+
+.workflow-shell #inspector > .contextual-selection-heading ~ .inspector-title {
+  display: none;
+}
+
+.workflow-shell .workflow-rig-properties,
+.workflow-shell .workflow-setup-properties {
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid var(--line-soft);
+}
+
+.workflow-shell .workflow-rig-properties h3 {
+  margin: 0 0 6px;
+  font-size: 11px;
+}
+
+.workflow-shell #workflowParentBone {
+  width: 100%;
+}
+
+.workflow-shell .workflow-setup-properties summary {
+  cursor: pointer;
+}
+
+.workflow-shell .workflow-setup-properties button {
+  margin: 7px 4px 0 0;
+  font-size: 11px;
+}
+
+.workflow-shell[data-has-document="false"] .outliner-tabs,
+.workflow-shell[data-has-document="false"] .outliner-tab-page,
+.workflow-shell[data-has-document="false"] .inspector-box {
+  display: none !important;
+}
+
+.workflow-shell[data-has-document="false"] .outliner-panel::after {
+  content: "Your objects and artwork will appear here.";
+  padding: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.workflow-shell[data-has-document="false"] .panel-right::after {
+  content: "Select an item to see its properties.";
+  padding: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}

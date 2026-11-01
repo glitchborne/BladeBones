@@ -18,6 +18,7 @@
 - For browser checks, use `python -u -m http.server 0 --bind 127.0.0.1` and open `/index.html` at the port printed by the server. Stop the server after checking. Chromium supports the folder save/load API.
 - `.vibecorp/verification.json` is the captured worker verification profile. Its test command runs in isolated worktrees; its optional preview needs Python 3. Loading the profile does not start commands.
 - Put disposable logs, probes and screenshots in `out/scratch/<topic>/`; do not treat ignored output as durable evidence. Record commands and results in the final report.
+- Keep scratch test drafts as `.txt`, not runnable `*.test.js` copies: Node test discovery also traverses ignored `out/` directories.
 
 ## VibeCorp workers
 

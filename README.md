@@ -46,6 +46,21 @@ Runtime export v11:
 - Runtime JSON excludes editor-only state such as layout, selection, hover, brush sessions, diagnostics UI state, test-pose state, undo/redo, view filters, pick filters, and workbench tabs;
 - a **Download Runtime v11** button exports the runtime payload as a standalone JSON file.
 
+## Main workflow
+
+Use the top navigation to focus on the current stage:
+
+1. **ART** — import/place artwork and organize objects.
+2. **RIG** — draw bones, arrange hierarchy and attach artwork.
+3. **MESH** — create topology, bind and paint weights when deformation is needed.
+4. **ANIMATE** — create clips, add keys, edit the timeline and preview playback.
+
+Rigid artwork can animate without a mesh or bone weights. View/Pick filters,
+markers and diagnostics are under **Workspace → View / Tools**; Project/Runtime
+JSON and local recovery are under **Workspace → Data**. Technical inspector
+properties use **Advanced** disclosures. See [Workflow workspace](docs/UI_WORKFLOW.md)
+for ownership, preserved controls and browser verification.
+
 ## Running the editor
 
 Run from a local server instead of directly opening `index.html`, especially when using folder save/load.

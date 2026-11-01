@@ -372,7 +372,14 @@ function drawMeshEditorOverlay(){
   const rawMode=(typeof meshSelectionMode==='function'?meshSelectionMode():state.meshEdit.selectionMode||'vertex');
   const mode=(rawMode==='face'?'TRIANGLE':rawMode.toUpperCase());
   const act=(typeof meshActionTool==='function'?meshActionTool():state.meshEdit.actionTool||'select').toUpperCase();
-  ctx.save();ctx.fillStyle='#ffcc33';ctx.font='12px system-ui';ctx.fillText((state.meshEdit.tool==='weights'?'WEIGHT EDIT · diagnostics overlay · P paint · A adjust · assign / auto bind weights':(state.meshEdit.tool==='deform'?'FFD DEFORM · drag vertices · K key shape':`MESH EDIT · ${mode} · ${act} · 1 vertex / 2 edge / 3 triangle · K click point / drag line`)),14,42);ctx.restore();
+  ctx.save();
+  ctx.fillStyle = '#ffcc33';
+  ctx.font = '12px system-ui';
+  const status = state.meshEdit.tool === 'weights'
+    ? (state.meshEdit.weightPaintSession?.active ? 'Weight session / Apply or Cancel to finish' : 'Weights / choose a bone, then Paint or Adjust')
+    : (state.meshEdit.tool === 'deform' ? 'Deform shape / drag vertices' : `Mesh / ${mode} / ${act}`);
+  ctx.fillText(status, 14, 64);
+  ctx.restore();
   drawMeshKnifePreview();
 }
 function drawObjectSlots(objectId,drawn=new Set()){

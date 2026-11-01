@@ -1,0 +1,217 @@
+.workflow-shell .contextual-selection-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--line-soft, #303741);
+  border-left: 2px solid var(--accent, #56a8ff);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.workflow-shell .contextual-selection-copy {
+  min-width: 0;
+}
+
+.workflow-shell .contextual-mode-label {
+  color: var(--muted, #8792a0);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.workflow-shell .contextual-selection-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  margin: 2px 0 0;
+  color: var(--text, #e5e9ef);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.workflow-shell .contextual-selection-type {
+  flex: 0 0 auto;
+  color: var(--muted, #8792a0);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.workflow-shell .contextual-selection-name,
+.workflow-shell .contextual-selection-summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workflow-shell .contextual-selection-summary {
+  max-width: 100%;
+  margin: 3px 0 0;
+  color: var(--muted, #8792a0);
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.workflow-shell .contextual-selection-actions,
+.workflow-shell .contextual-guidance-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 48%;
+}
+
+.workflow-shell .contextual-action-button {
+  min-height: 23px;
+  padding: 2px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.workflow-shell .contextual-disclosure {
+  color: var(--text, #e5e9ef);
+}
+
+.workflow-shell .contextual-disclosure > summary {
+  cursor: pointer;
+  color: var(--muted, #aab3bf);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.5;
+  list-style-position: inside;
+}
+
+.workflow-shell .contextual-disclosure > summary:focus-visible {
+  outline: 2px solid var(--accent, #56a8ff);
+  outline-offset: 2px;
+}
+
+.workflow-shell .contextual-advanced-tabs {
+  flex: 0 0 100%;
+  padding-top: 3px;
+  border-top: 1px solid var(--line-soft, #303741);
+}
+
+.workflow-shell .contextual-advanced-tab-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 4px 0 1px 13px;
+}
+
+.workflow-shell .contextual-binding-advanced {
+  flex: 0 0 auto;
+  padding: 0 5px;
+}
+
+.workflow-shell .contextual-binding-advanced-content {
+  padding-top: 3px;
+}
+
+.workflow-shell .contextual-binding-advanced-content-panel {
+  margin: 5px 7px;
+  padding: 5px 7px;
+  border: 1px solid var(--line-soft, #303741);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .12);
+}
+
+.workflow-shell .contextual-binding-advanced-content-body {
+  padding-top: 5px;
+}
+
+.workflow-shell .contextual-advanced-tabs[hidden] {
+  display: none;
+}
+
+.workflow-shell .contextual-inspector-details {
+  margin: 6px 0;
+  padding: 5px 7px;
+  border: 1px solid var(--line-soft, #303741);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .12);
+}
+
+.workflow-shell .contextual-inspector-detail-content {
+  padding-top: 5px;
+}
+
+.workflow-shell .contextual-inspector-detail-content .raw-preview {
+  width: 100%;
+}
+
+.workflow-shell .contextual-deform-gate {
+  padding: 8px;
+  border: 1px solid var(--line-soft, #303741);
+  border-radius: 4px;
+  color: var(--muted, #aab3bf);
+  font-size: 11px;
+}
+
+.workflow-shell .contextual-deform-gate[hidden] {
+  display: none;
+}
+
+.workflow-shell .contextual-guidance-message {
+  margin: 0 0 6px;
+}
+
+.workflow-shell .contextual-guidance-actions {
+  justify-content: flex-start;
+  max-width: none;
+}
+
+.workflow-shell .tree-row .tree-icon {
+  color: var(--muted, #aab3bf);
+}
+
+.workflow-shell .tree-row.object .tree-icon,
+.workflow-shell .tree-row.bone .tree-icon,
+.workflow-shell .tree-row.slot .tree-icon,
+.workflow-shell .tree-row.marker .tree-icon {
+  color: var(--muted, #aab3bf);
+}
+
+.workflow-shell .contextual-tree-kind {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 0 3px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  color: var(--muted, #aab3bf);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.workflow-shell .tree-row[data-contextual-selected='true'] .contextual-tree-kind {
+  color: var(--text, #e5e9ef);
+}
+
+.workflow-shell .tab-button[hidden],
+.workflow-shell .contextual-disclosure[hidden],
+.workflow-shell .contextual-deform-gate[hidden],
+.workflow-shell #meshWorkbench[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .workflow-shell .contextual-selection-heading {
+    flex-direction: column;
+  }
+
+  .workflow-shell .contextual-selection-actions {
+    justify-content: flex-start;
+    max-width: none;
+  }
+}

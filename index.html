@@ -6,6 +6,9 @@
   <title>Indie 2D Skeletal Editor · v11 Stable Runtime Export</title>
   <link rel="stylesheet" href="css/editor.css">
   <link rel="stylesheet" href="css/workflow.css">
+  <link rel="stylesheet" href="css/workflow-workspaces.css">
+  <link rel="stylesheet" href="css/contextual-panels.css">
+  <link rel="stylesheet" href="css/workflow-context.css">
 </head>
 <body>
 <div class="app workflow-shell" data-workflow="art" data-utility="none"
@@ -17,8 +20,8 @@
         <button id="newProjectBtn" title="Create GameDoc or ToonDoc">New</button>
         <button id="loadProjectFolder" title="Open a project folder containing project.json and assets/">Open</button>
         <button id="saveProjectFolder" title="Save project.json and assets/ to a project folder">Save</button>
-        <button id="undo" title="Undo">Undo</button>
-        <button id="redo" title="Redo">Redo</button>
+        <button id="undo" title="Undo (Ctrl/Cmd+Z)">Undo</button>
+        <button id="redo" title="Redo (Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y)">Redo</button>
         <span id="docTypeLabel" class="doc-pill">No document</span>
       </div>
       <nav class="workflow-nav" aria-label="Workflow">
@@ -78,10 +81,10 @@
   </header>
 
   <div class="workspace">
-    <aside class="side panel-stack panel-left outliner-panel"><div class="panel-dock-header"><span>Scene Hierarchy</span><button id="collapseLeftPanel" title="Collapse outliner">◀</button></div>
-      <div class="tabbar outliner-tabs" id="outlinerTabs"><button id="outlinerTabScene" class="tab-button">Scene</button><button id="outlinerTabRig" class="tab-button">Object Rig</button><button id="outlinerTabDraw" class="tab-button">Draw Order</button></div>
+    <aside class="side panel-stack panel-left outliner-panel"><div class="panel-dock-header"><span>Hierarchy</span><button id="collapseLeftPanel" title="Collapse outliner">◀</button></div>
+      <div class="tabbar outliner-tabs" id="outlinerTabs"><button id="outlinerTabScene" class="tab-button">Objects</button><button id="outlinerTabRig" class="tab-button">Rig</button><button id="outlinerTabDraw" class="tab-button">Artwork</button></div>
       <div class="box scene-outliner-box outliner-tab-page outliner-scene-box"><h3>Scene</h3><div id="documentPanel" class="doc-panel"></div><input id="outlinerSearch" placeholder="search scene / object / bone / slot" class="full-field"><div class="inline compact-inline"><button id="addObject">New object</button><button id="deleteObject" class="bad">Delete</button></div><details class="hierarchy-details"><summary>Object relationships</summary><div class="hierarchy-details-body"><div class="row compact-row"><span>Object</span><select id="objectAttachSelect"></select></div><div class="row compact-row toon-only"><span>Render pass</span><select id="objectRenderLayerSelect"></select></div><div class="row compact-row"><span>Parent slot</span><select id="objectParentSlotSelect"></select></div><div class="inline compact-inline"><button id="attachObjectToSlot">Attach</button><button id="detachObjectFromSlot">Detach</button></div></div></details><div id="sceneOutliner" class="tree-list scene-tree"></div></div>
-      <div class="box scene-outliner-box outliner-tab-page outliner-rig-box"><h3>Selected Object Rig</h3><div class="inline compact-inline outliner-filters"><label><input type="checkbox" id="outlinerBones" checked> bones</label><label><input type="checkbox" id="outlinerSlots" checked> slots</label><label><input type="checkbox" id="outlinerMarkers" checked> markers</label><label><input type="checkbox" id="outlinerUnbound" checked> loose</label></div><div class="row compact-row"><span>Bone filter</span><select id="outlinerRoleFilter"><option value="all">all roles</option><option value="deform">deform</option><option value="control">controls</option><option value="socket">sockets</option><option value="weighted">weighted/parented</option></select></div><div id="objectRigTree" class="tree-list object-rig-tree"></div></div>
+      <div class="box scene-outliner-box outliner-tab-page outliner-rig-box"><h3>Rig hierarchy</h3><div class="inline compact-inline outliner-filters"><label><input type="checkbox" id="outlinerBones" checked> bones</label><label><input type="checkbox" id="outlinerSlots" checked> slots</label><label><input type="checkbox" id="outlinerMarkers" checked> markers</label><label><input type="checkbox" id="outlinerUnbound" checked> loose</label></div><div class="row compact-row"><span>Bone filter</span><select id="outlinerRoleFilter"><option value="all">all roles</option><option value="deform">deform</option><option value="control">controls</option><option value="socket">sockets</option><option value="weighted">weighted/parented</option></select></div><div id="objectRigTree" class="tree-list object-rig-tree"></div></div>
       <div class="box scene-outliner-box outliner-tab-page outliner-draw-box"><h3>Draw Order</h3><div class="inline compact-inline"><button id="addSlot">Add slot</button><button id="slotUp">Up</button><button id="slotDown">Down</button></div><div id="drawOrderList" class="tree-list draw-order-tree"></div></div>
     </aside>
     <aside class="tside timeline-settings"><div class="panel-dock-header"><span>Timeline Tools</span><button id="collapseTimelineLeft" title="Collapse timeline tools">◀</button></div>
@@ -193,7 +196,7 @@
         </details>
       </div>
     </aside>
-    <aside class="side right panel-stack panel-right"><div class="panel-dock-header"><span>Inspector / Controls</span><button id="collapseRightPanel" title="Collapse inspector">▶</button></div>
+    <aside class="side right panel-stack panel-right"><div class="panel-dock-header"><span>Inspector</span><button id="collapseRightPanel" title="Collapse inspector">▶</button></div>
       <div class="box inspector-box"><h3>Inspector</h3><div class="tabbar" id="inspectorTabs"></div><div id="inspector"></div></div>
       <div class="box animation-only"><h3>Onion skin</h3>
         <label><input type="checkbox" id="onionEnabled"> enabled</label>

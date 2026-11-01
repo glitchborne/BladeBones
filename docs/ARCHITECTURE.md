@@ -149,6 +149,11 @@ condition. Any newly exposed global bridge requires a short architectural
 decision and review. No default new globals, new `state` bags, runtime discovery
 with `typeof someGlobal`, reflection factories or generic service registry.
 
+The current workflow UI uses this seam: `src/main.js` composes UI modules and an
+explicitly injected `editor/legacy/workflow-adapter.js` after classic bootstrap.
+See [Workflow workspace](UI_WORKFLOW.md) for the integration decision and removal
+conditions. The domain/runtime owners remain on their existing implementations.
+
 ## Data ownership
 
 | Concept | Canonical responsibility |

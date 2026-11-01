@@ -12,3 +12,32 @@ exportRuntimeJson?.(true);
 syncTime();
 renderAll();
 requestAnimationFrame(frame);
+
+// The composition root passes legacy services explicitly; modules add no globals.
+import('../src/main.js').then(({ mountWorkflow }) => {
+  mountWorkflow({
+    root: document.querySelector('.app'),
+    state,
+    commands: {
+      setMode,
+      setTool,
+      select,
+      setMeshWorkbenchTab,
+      setPlaying,
+      stopPlayback,
+      keySelected,
+      setSlotParentBone,
+      pushUndo,
+      changed,
+      setBindPoseFromCurrent,
+      restoreBindPose,
+    },
+    views: { renderAll, setOutlinerTab, sizeCanvas, renderTimeline },
+  });
+}).catch((error) => {
+  console.error('Workflow UI could not start:', error);
+  const notice = document.querySelector('#workflowNotice');
+  if (notice) {
+    notice.textContent = 'Workflow controls could not load. Serve the editor over HTTP and reload.';
+  }
+});

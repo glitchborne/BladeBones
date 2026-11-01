@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — Workflow-centered workspace
+
+- Added ART / RIG / MESH / ANIMATE navigation with contextual tools and next-step hints.
+- Made the viewport central and limited the timeline to animation work.
+- Moved filters, markers, diagnostics and JSON utilities behind secondary disclosure.
+- Added contextual inspector/hierarchy presentation and a Rig attachment/setup entry point using existing commands.
+- Preserved keyboard shortcuts, Project/Runtime formats and the legacy editing algorithms.
+- Added workflow/adapter regression tests and a reproducible Chromium smoke/screenshot script.
+
 ## v11 — Stable Runtime Export Format
 
 ### Added
@@ -373,4 +382,3 @@
 ### Changed
 - Rigging transforms no longer write `bone.rest` while Test Pose is active.
 - Slot transform edits avoid writing `slot.setupLocal` while Test Pose is active.
-
