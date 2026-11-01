@@ -5,48 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Indie 2D Skeletal Editor · v11 Stable Runtime Export</title>
   <link rel="stylesheet" href="css/editor.css">
+  <link rel="stylesheet" href="css/workflow.css">
 </head>
 <body>
-<div class="app">
-  <div class="top">
-    <div class="toolbar-group project-toolbar">
-      <button id="newProjectBtn" title="Create GameDoc or ToonDoc">New</button>
-      <button id="saveProjectFolder" title="Save project.json and assets/ folder">Save Folder</button>
-      <button id="loadProjectFolder" title="Load project.json and assets/ folder">Load Folder</button>
-      <span id="docTypeLabel" class="doc-pill">No document</span>
+<div class="app workflow-shell" data-workflow="art" data-utility="none"
+  data-has-document="false" data-has-artwork="false" data-has-mesh="false">
+  <header class="top">
+    <div class="toolbar-row toolbar-row-primary">
+      <div class="toolbar-group project-toolbar" aria-label="Document">
+        <span class="toolbar-label">Document</span>
+        <button id="newProjectBtn" title="Create GameDoc or ToonDoc">New</button>
+        <button id="loadProjectFolder" title="Open a project folder containing project.json and assets/">Open</button>
+        <button id="saveProjectFolder" title="Save project.json and assets/ to a project folder">Save</button>
+        <button id="undo" title="Undo">Undo</button>
+        <button id="redo" title="Redo">Redo</button>
+        <span id="docTypeLabel" class="doc-pill">No document</span>
+      </div>
+      <nav class="workflow-nav" aria-label="Workflow">
+        <button id="workflowArt" type="button" data-workflow-mode="art" aria-pressed="true">ART</button>
+        <button id="workflowRig" type="button" data-workflow-mode="rig" aria-pressed="false">RIG</button>
+        <button id="workflowMesh" type="button" data-workflow-mode="mesh" aria-pressed="false">MESH</button>
+        <button id="workflowAnimate" type="button" data-workflow-mode="animate" aria-pressed="false">ANIMATE</button>
+      </nav>
+      <div class="workflow-mode-copy" aria-live="polite">
+        <strong id="workflowModeLabel">ART</strong>
+        <span id="workflowModeDescription">Import and place artwork</span>
+      </div>
+      <span class="grow"></span>
+      <div class="toolbar-group preview-toolbar" aria-label="Preview">
+        <span class="toolbar-label">Preview</span>
+        <button type="button" data-workflow-action="preview-play" title="Play preview">Play</button>
+        <button type="button" data-workflow-action="preview-stop" title="Stop preview">Stop</button>
+      </div>
+      <button id="workflowImportArtwork" type="button" data-workflow-action="import-art"
+        data-workflow-only="art" title="Import an image into the artwork library">Import Image</button>
     </div>
-    <div class="toolbar-group mode-tools">
-      <button id="modeRig" class="on" title="Rigging: bones, slots, binding, mesh, weights">Rigging</button><button id="modeAnimate" title="Animation: keys, playback, onion, curves">Animation</button><select id="mode" class="mode-select-hidden" aria-label="Mode"><option value="skeleton">Rigging</option><option value="pose">Animation</option></select>
-      <span class="toolbar-label">Tools</span>
-      <button id="toolSelect" class="on" title="Select / transform selected item (V)">Select</button>
-      <button id="toolBone" class="rig-tool" title="Create bones in Rigging (B)">Create Bone</button>
-      <button id="toolPan" title="Pan viewport (H / middle mouse)">Pan</button>
-      <span class="toolbar-sep"></span>
-      <span class="toolbar-label">Transform</span>
-      <button id="toolMove" title="Move selected item / vertices (G or W)">Move</button>
-      <button id="toolRotate" title="Rotate selected item (R)">Rotate</button>
-      <button id="toolScale" title="Scale selected item (S)">Scale</button>
+    <div class="toolbar-row toolbar-row-secondary">
+      <div class="toolbar-group mode-tools" aria-label="Current tools">
+        <div class="mode-legacy-controls" hidden>
+          <button id="modeRig" class="on" title="Rigging: bones, slots, binding, mesh, weights">Rigging</button><button id="modeAnimate" title="Animation: keys, playback, onion, curves">Animation</button><select id="mode" class="mode-select-hidden" aria-label="Mode"><option value="skeleton">Rigging</option><option value="pose">Animation</option></select>
+        </div>
+        <span class="toolbar-label">Tools</span>
+        <button id="toolSelect" class="on" title="Select / transform selected item (V)">Select</button>
+        <button id="toolBone" class="rig-tool" title="Create bones in Rigging (B)">Create Bone</button>
+        <button id="toolPan" title="Pan viewport (H / middle mouse)">Pan</button>
+        <span class="toolbar-sep"></span>
+        <span class="toolbar-label">Transform</span>
+        <button id="toolMove" title="Move selected item / vertices (G or W)">Move</button>
+        <button id="toolRotate" title="Rotate selected item (R)">Rotate</button>
+        <button id="toolScale" title="Scale selected item (S)">Scale</button>
+      </div>
+      <span class="grow"></span>
+      <details class="toolbar-menu project-more-menu">
+        <summary>Project / More</summary>
+        <div class="toolbar-menu-popover">
+          <button id="clear" class="bad" title="Clear the current document">Clear document</button>
+        </div>
+      </details>
+      <details class="toolbar-menu workspace-menu">
+        <summary>Workspace</summary>
+        <div class="toolbar-menu-popover workspace-controls">
+          <button id="toggleLeftPanel" title="Collapse / expand outliner">Outliner</button>
+          <button id="toggleViewFiltersPanel" title="Open / close View / Pick tools">View / Tools</button>
+          <button id="toggleRightPanel" title="Collapse / expand inspector">Inspector</button>
+          <button id="toggleTimelineLeft" title="Collapse / expand timeline tools">Timeline tools</button>
+          <button id="toggleJsonPanel" title="Open / close project data">Project data</button>
+          <button id="toggleTimeline" title="Collapse / expand timeline">Timeline</button>
+          <button id="resetLayout" title="Reset panel layout">Reset layout</button>
+        </div>
+      </details>
     </div>
-    <div class="toolbar-group">
-      <button id="clear" class="bad">Clear Doc</button>
-      <button id="undo">Undo</button><button id="redo">Redo</button>
-    </div>
-    <span class="grow"></span>
-    <div class="toolbar-group workspace-controls">
-      <button id="toggleLeftPanel" title="Collapse / expand outliner">Outliner</button>
-      <button id="toggleViewFiltersPanel" title="Collapse / expand View / Pick Filters">View/Pick</button>
-      <button id="toggleRightPanel" title="Collapse / expand inspector">Inspector</button>
-      <button id="toggleTimelineLeft" title="Collapse / expand timeline settings">Timeline tools</button>
-      <button id="toggleJsonPanel" title="Collapse / expand project JSON">JSON</button>
-      <button id="toggleTimeline" title="Collapse / expand timeline">Timeline</button>
-      <button id="resetLayout" title="Reset panel layout">Reset layout</button>
-    </div>
-  </div>
+  </header>
 
   <div class="workspace">
     <aside class="side panel-stack panel-left outliner-panel"><div class="panel-dock-header"><span>Scene Hierarchy</span><button id="collapseLeftPanel" title="Collapse outliner">◀</button></div>
       <div class="tabbar outliner-tabs" id="outlinerTabs"><button id="outlinerTabScene" class="tab-button">Scene</button><button id="outlinerTabRig" class="tab-button">Object Rig</button><button id="outlinerTabDraw" class="tab-button">Draw Order</button></div>
-      <div class="box scene-outliner-box outliner-tab-page outliner-scene-box"><h3>Scene</h3><div id="documentPanel" class="doc-panel"></div><input id="outlinerSearch" placeholder="search scene / object / bone / slot" class="full-field"><div class="inline compact-inline"><button id="addObject">New object</button><button id="deleteObject" class="bad">Delete</button></div><div class="row compact-row"><span>Object</span><select id="objectAttachSelect"></select></div><div class="row compact-row toon-only"><span>Render pass</span><select id="objectRenderLayerSelect"></select></div><div class="row compact-row"><span>Parent slot</span><select id="objectParentSlotSelect"></select></div><div class="inline compact-inline"><button id="attachObjectToSlot">Attach</button><button id="detachObjectFromSlot">Detach</button></div><div id="sceneOutliner" class="tree-list scene-tree"></div></div>
+      <div class="box scene-outliner-box outliner-tab-page outliner-scene-box"><h3>Scene</h3><div id="documentPanel" class="doc-panel"></div><input id="outlinerSearch" placeholder="search scene / object / bone / slot" class="full-field"><div class="inline compact-inline"><button id="addObject">New object</button><button id="deleteObject" class="bad">Delete</button></div><details class="hierarchy-details"><summary>Object relationships</summary><div class="hierarchy-details-body"><div class="row compact-row"><span>Object</span><select id="objectAttachSelect"></select></div><div class="row compact-row toon-only"><span>Render pass</span><select id="objectRenderLayerSelect"></select></div><div class="row compact-row"><span>Parent slot</span><select id="objectParentSlotSelect"></select></div><div class="inline compact-inline"><button id="attachObjectToSlot">Attach</button><button id="detachObjectFromSlot">Detach</button></div></div></details><div id="sceneOutliner" class="tree-list scene-tree"></div></div>
       <div class="box scene-outliner-box outliner-tab-page outliner-rig-box"><h3>Selected Object Rig</h3><div class="inline compact-inline outliner-filters"><label><input type="checkbox" id="outlinerBones" checked> bones</label><label><input type="checkbox" id="outlinerSlots" checked> slots</label><label><input type="checkbox" id="outlinerMarkers" checked> markers</label><label><input type="checkbox" id="outlinerUnbound" checked> loose</label></div><div class="row compact-row"><span>Bone filter</span><select id="outlinerRoleFilter"><option value="all">all roles</option><option value="deform">deform</option><option value="control">controls</option><option value="socket">sockets</option><option value="weighted">weighted/parented</option></select></div><div id="objectRigTree" class="tree-list object-rig-tree"></div></div>
       <div class="box scene-outliner-box outliner-tab-page outliner-draw-box"><h3>Draw Order</h3><div class="inline compact-inline"><button id="addSlot">Add slot</button><button id="slotUp">Up</button><button id="slotDown">Down</button></div><div id="drawOrderList" class="tree-list draw-order-tree"></div></div>
     </aside>
@@ -90,15 +124,37 @@
     <div class="workspace-body">
   <div class="main">
     <section class="stage viewport">
-      <div class="viewport-header"><span>Viewport</span><div class="viewport-header-actions"><button id="cameraViewToggle" class="viewport-toggle" title="Preview ToonDoc from active camera">Camera View</button><span id="pickStatus" class="viewport-status">Rigging · Select</span></div></div>
-      <div class="viewport-canvas-wrap"><canvas id="canvas"></canvas><div class="tool-status" id="toolStatus">Select · Move</div><div class="hud" id="viewportHud">Rigging: V Select, B Create Bone, G/W Move, R Rotate, S Scale, H Pan. Mesh, binding and weights are in the workbench below the viewport.</div></div>
+      <div class="viewport-header">
+        <span class="viewport-title">Viewport</span>
+        <span id="workflowSelectionLabel" class="viewport-selection-label">Nothing selected</span>
+        <div class="viewport-header-actions">
+          <span id="workflowNotice" role="status" aria-live="polite"></span>
+          <button id="cameraViewToggle" class="viewport-toggle" title="Preview ToonDoc from active camera">Camera View</button>
+          <span id="pickStatus" class="viewport-status">Rigging · Select</span>
+        </div>
+      </div>
+      <div class="viewport-canvas-wrap">
+        <canvas id="canvas"></canvas>
+        <div id="workflowGuidance" class="workflow-guidance">
+          <div class="workflow-guidance-card">
+            <span class="workflow-guidance-kicker">ART WORKSPACE</span>
+            <h2 id="workflowGuidanceTitle">Create a document to begin</h2>
+            <p id="workflowGuidanceText">Start with a GameDoc or ToonDoc, then import artwork to build your scene.</p>
+            <div class="inline workflow-guidance-actions">
+              <button id="workflowPrimaryAction" type="button" data-workflow-action="new-document">New document</button>
+              <button id="workflowSecondaryAction" type="button" data-workflow-action="import-art">Import image</button>
+            </div>
+          </div>
+        </div>
+        <div class="tool-status" id="toolStatus">Select · Move</div>
+        <div class="hud" id="viewportHud">Rigging: V Select, B Create Bone, G/W Move, R Rotate, S Scale, H Pan. Mesh, binding and weights are in the workbench below the viewport.</div>
+      </div>
       <div class="viewport-workbench-resizer resize-mesh-workbench" data-resize="mesh-workbench-height" title="Resize lower workbench height"></div>
       <div class="viewport-workbench" id="viewportWorkbench">
         <section class="workbench-pane workbench-assets-pane">
-          <div class="workbench-pane-head"><span>Assets / Markers</span><span class="tag">staging</span></div>
+          <div class="workbench-pane-head"><span>Artwork</span><span class="tag">library</span></div>
           <div class="workbench-assets-body">
             <div class="box"><h3>Artwork staging</h3><p class="note">Import/place images as slots, draw bones over them, then use the Mesh Workbench → Binding tab to set Parent Bone. Use Mesh / Weights only when the image must bend.</p><label><input type="checkbox" id="artAutoPlace" checked> auto-place new art on stage</label><div class="inline"><button id="addRectAtt">Place rect</button><button id="addPngBtn">Place PNG</button><input id="pngInput" type="file" accept="image/*" multiple class="hidden-file-input"></div><hr><div id="attList" class="list"></div></div>
-      <div class="box"><h3>Markers</h3><div class="inline"><button id="addSocket">Socket</button><button id="addHitbox">Hitbox</button><button id="delMarker" class="bad">Delete</button></div><hr><div id="markerList" class="list"></div></div>
           </div>
         </section>
         <section class="workbench-pane workbench-mesh-pane">
@@ -107,7 +163,7 @@
       </div>
     </section>
 
-    <aside class="side panel-stack panel-viewfilters"><div class="panel-dock-header"><span>View / Pick Filters</span><button id="collapseViewFiltersPanel" title="Collapse View / Pick Filters">▶</button></div>
+    <aside class="side panel-stack panel-viewfilters" aria-label="View and tools"><div class="panel-dock-header"><span>View / Tools</span><button id="collapseViewFiltersPanel" title="Close View / Tools">▶</button></div>
       <div class="viewfilters-body">
         <div class="box"><h3>View</h3>
           <label><input type="checkbox" id="showAttachments" checked> attachments</label>
@@ -128,6 +184,13 @@
           <label><input type="checkbox" id="lockNonBonesInPose" checked> bones only in Pose / animate</label>
           <p class="note">Visible objects do not have to be clickable. Turn off bone picking only when you want Weight Paint strokes to pass over bone handles.</p>
         </div>
+        <details class="utility-advanced-details">
+          <summary>Project health and markers</summary>
+          <div class="utility-advanced-body">
+            <div class="box"><h3>Project Health</h3><div id="projectHealth" class="health-list note">Run validation to inspect rig / animation issues.</div><div class="inline"><button id="validateProjectBtnRight">Validate</button><button id="fixOrphansBtn">Fix orphan keys</button></div></div>
+            <div class="box"><h3>Markers</h3><div class="inline"><button id="addSocket">Socket</button><button id="addHitbox">Hitbox</button><button id="delMarker" class="bad">Delete</button></div><hr><div id="markerList" class="list"></div></div>
+          </div>
+        </details>
       </div>
     </aside>
     <aside class="side right panel-stack panel-right"><div class="panel-dock-header"><span>Inspector / Controls</span><button id="collapseRightPanel" title="Collapse inspector">▶</button></div>
@@ -141,7 +204,6 @@
         <label><input type="checkbox" id="onionAttachments"> attachment outlines</label>
       </div>
       <div class="box animation-only"><h3>Pose library</h3><div class="inline"><input id="poseName" placeholder="pose name" value="pose" class="field-short"><input id="poseCategory" placeholder="category" value="General" class="field-short"><button id="savePose">Save pose</button><button id="applyPose">Apply saved</button></div><label><input type="checkbox" id="poseSelectedOnly"> selected bones only</label><div class="row"><span>Blend</span><input id="poseBlend" type="range" min="0" max="100" value="100"></div><div class="inline"><button id="copyPose">Copy pose</button><button id="pastePose">Paste pose</button><button id="pasteMirrorPose">Paste mirrored</button><button id="mirrorPose">Mirror current</button></div><hr><div id="poseList" class="list pose-list"></div></div>
-      <div class="box rig-only"><h3>Project Health</h3><div id="projectHealth" class="health-list note">Run validation to inspect rig / animation issues.</div><div class="inline"><button id="validateProjectBtnRight">Validate</button><button id="fixOrphansBtn">Fix orphan keys</button></div></div>
     </aside>
     <div class="main-resizer resize-main-right" data-resize="main-right" title="Resize inspector"></div>
   </div>
